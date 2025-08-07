@@ -1,58 +1,59 @@
 package com.heamimont.salesstoreapi.controller;
 
-import com.heamimont.salesstoreapi.model.User;
-import com.heamimont.salesstoreapi.repository.UserRepository;
+import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
+import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
+import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@PreAuthorize("hasRole('ADMIN')")  // All endpoints require ADMIN role
 public class UserController {
+    private final UserService userService;
 
-    private UserService userService;
-    private UserRepository userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-    // GET /api/users - Admin only
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // GET /api/users/{id} - Admin only
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        var user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    // POST /api/users - Admin only
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.createUser(createUserDTO));
     }
 
-    // PUT /api/users/{id} - Admin only
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updated = userService.updateUser(id, user);
-        if (updated == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserDTO updateUserDTO) {
+        return ResponseEntity.ok(userService.updateUser(id, updateUserDTO));
     }
 
-    // DELETE /api/users/{id} - Admin only
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 }
-

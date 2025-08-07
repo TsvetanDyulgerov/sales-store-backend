@@ -1,50 +1,63 @@
 package com.heamimont.salesstoreapi.controller;
 
-import com.heamimont.salesstoreapi.model.Order;
+
+import com.heamimont.salesstoreapi.dto.order.CreateOrderDTO;
+import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
+import com.heamimont.salesstoreapi.dto.order.UpdateOrderStatusDTO;
 import com.heamimont.salesstoreapi.service.OrderService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderController {
+    private final OrderService orderService;
 
-    private OrderService orderService;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
-
-    // POST /orders - User access
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        return ResponseEntity.ok(orderService.createOrder(order));
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<OrderResponseDTO> createOrder(
+            @Valid @RequestBody CreateOrderDTO createOrderDTO,
+            @AuthenticationPrincipal Principal principal) {
+        // Assuming you'll set the user ID from the authenticated principal
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(orderService.createOrder(createOrderDTO));
     }
 
-    // GET /orders/user - User access
     @GetMapping("/user")
-    public ResponseEntity<List<Order>> getCurrentUserOrders(Principal principal) {
-        String username = principal.getName(); // from authenticated user
-        List<Order> orders = orderService.getOrdersByUsername(username);
-        return ResponseEntity.ok(orders);}
-
-    // GET /orders - Admin only
-    @GetMapping()
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders);
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders(
+            @AuthenticationPrincipal Principal principal) {
+        return ResponseEntity.ok(orderService.getOrdersByUsername(principal.getName()));
     }
 
-    // PUT /orders/{orderId}/status - Admin only
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponseDTO>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
     @PutMapping("/{orderId}/status")
-    public ResponseEntity<Order> updateOrderStatus(@RequestBody Order order, @PathVariable Long orderId) {
-        Order updated = orderService.updateOrderStatus(orderId, order.getStatus());
-
-        if (updated == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(order);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponseDTO> updateOrderStatus(
+            @PathVariable Long orderId,
+            @Valid @RequestBody UpdateOrderStatusDTO updateOrderStatusDTO) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(orderId, updateOrderStatusDTO.getStatus()));
     }
 
+    @GetMapping("/{orderId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    }
 }

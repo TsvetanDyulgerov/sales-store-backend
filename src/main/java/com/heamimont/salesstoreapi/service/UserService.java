@@ -1,71 +1,111 @@
 package com.heamimont.salesstoreapi.service;
 
+import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
+import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
+import com.heamimont.salesstoreapi.dto.user.UserMapper;
+import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
+import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
+import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.User;
 import com.heamimont.salesstoreapi.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-/**
- * Service class for managing users in the sales store application.
- * Provides methods to perform CRUD operations on User entities.
- */
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, 
+                      UserMapper userMapper, 
+                      PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAllUsers() {
+        try {
+            return userRepository.findAll().stream()
+                    .map(userMapper::toDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Failed to fetch all users");
+        }
     }
 
-    public User getUserById(Long id) {
+    public UserResponseDTO getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+                .map(userMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User createUser(User user) {
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-        return userRepository.save(user);
+    public UserResponseDTO getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(userMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User updateUser(Long id, User user) {
-        Optional<User> targetUser = userRepository.findById(id);
+    public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
+        try {
+            if (userRepository.existsByUsername(createUserDTO.getUsername())) {
+                throw new ResourceCreationException("Username already exists");
+            }
+            if (userRepository.existsByEmail(createUserDTO.getEmail())) {
+                throw new ResourceCreationException("Email already exists");
+            }
 
-        if (targetUser.isEmpty()) {
-            return null;
+            User user = userMapper.toEntity(createUserDTO);
+            user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+            User savedUser = userRepository.save(user);
+            return userMapper.toDTO(savedUser);
+        } catch (ResourceCreationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResourceCreationException("Failed to create user: " + e.getMessage());
+        }
+    }
+
+    public UserResponseDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (updateUserDTO.getUsername() != null && 
+            !updateUserDTO.getUsername().equals(user.getUsername()) && 
+            userRepository.existsByUsername(updateUserDTO.getUsername())) {
+            throw new ResourceCreationException("Username already exists");
         }
 
-        User existingUser = targetUser.get();
-
-        if (user.getUsername() != null) {
-            existingUser.setUsername(user.getUsername());
+        if (updateUserDTO.getEmail() != null && 
+            !updateUserDTO.getEmail().equals(user.getEmail()) && 
+            userRepository.existsByEmail(updateUserDTO.getEmail())) {
+            throw new ResourceCreationException("Email already exists");
         }
 
-        if (user.getPassword() != null) {
-            String hashedPassword = passwordEncoder.encode(user.getPassword());
-            existingUser.setPassword(hashedPassword);
+        userMapper.updateEntity(user, updateUserDTO);
+        
+        if (updateUserDTO.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
         }
 
-        if (user.getRole() != null) {
-            existingUser.setRole(user.getRole());
-        }
-
-        return userRepository.save(existingUser);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toDTO(updatedUser);
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found");
+        }
+        try {
+            userRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Failed to delete user");
+        }
     }
 }
