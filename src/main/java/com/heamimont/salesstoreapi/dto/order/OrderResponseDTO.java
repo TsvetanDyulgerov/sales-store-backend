@@ -1,5 +1,4 @@
 package com.heamimont.salesstoreapi.dto.order;
-import com.heamimont.salesstoreapi.dto.order.OrderDTO;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.model.OrderStatus;
 import lombok.Data;

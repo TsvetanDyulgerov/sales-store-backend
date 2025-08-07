@@ -1,5 +1,4 @@
 package com.heamimont.salesstoreapi.dto.order;
-import com.heamimont.salesstoreapi.dto.order.OrderProductDTO;
 import com.heamimont.salesstoreapi.model.OrderStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
