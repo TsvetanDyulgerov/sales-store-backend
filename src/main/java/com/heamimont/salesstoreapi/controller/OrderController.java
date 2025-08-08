@@ -16,7 +16,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
 
@@ -24,29 +24,38 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    // Create a new order for current user
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<OrderResponseDTO> createOrder(
             @Valid @RequestBody CreateOrderDTO createOrderDTO,
             @AuthenticationPrincipal Principal principal) {
-        // Assuming you'll set the user ID from the authenticated principal
+
+        // Set the username from the authenticated principal
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderService.createOrder(createOrderDTO));
     }
 
+    // Get current user's orders
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders(
             @AuthenticationPrincipal Principal principal) {
+
+        // Set the username from the authenticated principal
+
         return ResponseEntity.ok(orderService.getOrdersByUsername(principal.getName()));
     }
 
+    // Get orders by user ID
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
+    // Get orders by user ID
     @PutMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderResponseDTO> updateOrderStatus(
@@ -55,6 +64,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateOrderStatus(orderId, updateOrderStatusDTO.getStatus()));
     }
 
+    // Get orders by user ID
     @GetMapping("/{orderId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long orderId) {

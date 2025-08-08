@@ -1,4 +1,6 @@
 package com.heamimont.salesstoreapi.dto.user;
+import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
+import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,17 @@ public class UserMapper {
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRole());
+        return dto;
+    }
+
+    public CreateUserDTO fromRegisterRequest(RegisterRequest request) {
+        CreateUserDTO dto = new CreateUserDTO();
+        dto.setUsername(request.getUsername());
+        dto.setPassword(request.getPassword());
+        dto.setEmail(request.getEmail());
+        dto.setFirstName(request.getFirstName());
+        dto.setLastName(request.getLastName());
+        dto.setRole(Role.USER); // default role
         return dto;
     }
 }

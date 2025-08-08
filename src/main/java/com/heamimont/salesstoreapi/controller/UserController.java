@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @PreAuthorize("hasRole('ADMIN')")  // All endpoints require ADMIN role
 public class UserController {
     private final UserService userService;
@@ -22,21 +22,25 @@ public class UserController {
         this.userService = userService;
     }
 
+    // Get all users
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    // Get user by ID or username
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    // Get user by username
     @GetMapping("/username/{username}")
     public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
+    // Create a new user
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
         return ResponseEntity
@@ -44,6 +48,7 @@ public class UserController {
                 .body(userService.createUser(createUserDTO));
     }
 
+    // Update an existing user
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(
             @PathVariable Long id,
@@ -51,6 +56,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, updateUserDTO));
     }
 
+    // Delete a user by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

@@ -1,6 +1,5 @@
 package com.heamimont.salesstoreapi.service;
 
-import com.heamimont.salesstoreapi.dto.*;
 import com.heamimont.salesstoreapi.dto.order.CreateOrderDTO;
 import com.heamimont.salesstoreapi.dto.order.OrderMapper;
 import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
@@ -15,6 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing orders.
+ * Provides methods to create, retrieve, and update orders.
+ */
+
 @Service
 @Transactional
 public class OrderService {
@@ -26,6 +30,13 @@ public class OrderService {
         this.orderMapper = orderMapper;
     }
 
+    /**
+     * Creates a new order.
+     *
+     * @param createOrderDTO the DTO containing order details
+     * @return OrderResponseDTO containing the created order details
+     * @throws ResourceCreationException if the order creation fails
+     */
     public OrderResponseDTO createOrder(CreateOrderDTO createOrderDTO) {
         try {
             Order order = orderMapper.toEntity(createOrderDTO);
@@ -36,16 +47,13 @@ public class OrderService {
         }
     }
 
-    public List<OrderResponseDTO> getOrdersByUserId(Long userId) {
-        try {
-            return orderRepository.findByUserId(userId).stream()
-                    .map(orderMapper::toDTO)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Failed to fetch orders for user [" + userId + "]");
-        }
-    }
-
+    /**
+     * Retrieves orders by username.
+     *
+     * @param username the username of the user whose orders are to be retrieved
+     * @return List of OrderResponseDTO containing orders for the specified user
+     * @throws ResourceNotFoundException if no orders are found for the given username or an error occurs during retrieval
+     */
     public List<OrderResponseDTO> getOrdersByUsername(String username) {
         try {
             return orderRepository.findOrdersByUser_Username(username).stream()
@@ -56,6 +64,11 @@ public class OrderService {
         }
     }
 
+    /**
+     * Retrieved all orders
+     * @return List of OrderResponseDTO containing all orders
+     * @throws ResourceNotFoundException if there are no orders found or an error occurs during retrieval
+     */
     public List<OrderResponseDTO> getAllOrders() {
         try {
             return orderRepository.findAll().stream()
@@ -66,6 +79,14 @@ public class OrderService {
         }
     }
 
+    /**
+     * Updates the status of an order.
+     *
+     * @param orderId the ID of the order to update
+     * @param status the new status to set for the order
+     * @return OrderResponseDTO containing the updated order details
+     * @throws ResourceNotFoundException if the order with the given ID does not exist
+     */
     public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
@@ -75,6 +96,13 @@ public class OrderService {
         return orderMapper.toDTO(updatedOrder);
     }
 
+    /**
+     * Retrieves an order by its ID.
+     *
+     * @param orderId the ID of the order to retrieve
+     * @return OrderResponseDTO containing order details
+     * @throws ResourceNotFoundException if the order with the given ID does not exist
+     */
     public OrderResponseDTO getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .map(orderMapper::toDTO)

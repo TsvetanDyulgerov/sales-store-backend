@@ -15,6 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * Service class for managing users in the sales store API.
+ * Provides methods to create, read, update, and delete users.
+ */
 @Service
 @Transactional
 public class UserService {
@@ -30,6 +35,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Retrieves all users from the repository.
+     *
+     * @return List of UserResponseDTO containing all users
+     * @throws ResourceNotFoundException if an error occurs while fetching users
+     */
     public List<UserResponseDTO> getAllUsers() {
         try {
             return userRepository.findAll().stream()
@@ -40,18 +51,39 @@ public class UserService {
         }
     }
 
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param id the ID of the user to retrieve
+     * @return UserResponseDTO containing the user details
+     * @throws ResourceNotFoundException if the user with the given ID does not exist
+     */
     public UserResponseDTO getUserById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    /**
+     * Retrieves a user by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return UserResponseDTO containing the user details
+     * @throws ResourceNotFoundException if the user with the given username does not exist
+     */
     public UserResponseDTO getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(userMapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    /**
+     * Creates a new user.
+     *
+     * @param createUserDTO the DTO containing user details
+     * @return UserResponseDTO containing the created user details
+     * @throws ResourceCreationException if the user creation fails due to existing username or email
+     */
     public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
         try {
             if (userRepository.existsByUsername(createUserDTO.getUsername())) {
@@ -72,32 +104,53 @@ public class UserService {
         }
     }
 
+    /**
+     * Updates an existing user by their ID.
+     *
+     * @param id the ID of the user to update
+     * @param updateUserDTO the DTO containing updated user details
+     * @return UserResponseDTO containing the updated user details
+     * @throws ResourceNotFoundException if the user with the given ID does not exist
+     * @throws ResourceCreationException if the username or email already exists when updating
+     */
     public UserResponseDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
+        // Find the existing user or throw an exception if not found
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (updateUserDTO.getUsername() != null && 
-            !updateUserDTO.getUsername().equals(user.getUsername()) && 
-            userRepository.existsByUsername(updateUserDTO.getUsername())) {
+        // Check username uniqueness only if it's being updated
+        boolean isUsernameUpdate = updateUserDTO.getUsername() != null && 
+                              !updateUserDTO.getUsername().equals(user.getUsername());
+        if (isUsernameUpdate && userRepository.existsByUsername(updateUserDTO.getUsername())) {
             throw new ResourceCreationException("Username already exists");
         }
 
-        if (updateUserDTO.getEmail() != null && 
-            !updateUserDTO.getEmail().equals(user.getEmail()) && 
-            userRepository.existsByEmail(updateUserDTO.getEmail())) {
+        // Check email uniqueness only if it's being updated
+        boolean isEmailUpdate = updateUserDTO.getEmail() != null && 
+                           !updateUserDTO.getEmail().equals(user.getEmail());
+        if (isEmailUpdate && userRepository.existsByEmail(updateUserDTO.getEmail())) {
             throw new ResourceCreationException("Email already exists");
         }
-
-        userMapper.updateEntity(user, updateUserDTO);
         
+        // Update user fields using mapper
+        userMapper.updateEntity(user, updateUserDTO);
+
+        // Update password if provided (with encryption)
         if (updateUserDTO.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
         }
 
+        // Save and return updated user
         User updatedUser = userRepository.save(user);
         return userMapper.toDTO(updatedUser);
     }
 
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param id the ID of the user to delete
+     * @throws ResourceNotFoundException if the user with the given ID does not exist
+     */
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found");

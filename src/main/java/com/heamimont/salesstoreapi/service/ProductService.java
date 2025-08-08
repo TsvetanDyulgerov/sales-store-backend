@@ -10,13 +10,15 @@ import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.Product;
 import com.heamimont.salesstoreapi.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * * Service class for managing products in the sales store API.
+ * Provides methods to create, read, update, and delete products.
+ */
 @Service
-@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
@@ -26,6 +28,12 @@ public class ProductService {
         this.productMapper = productMapper;
     }
 
+    /**
+     * Retrieves all products from the repository.
+     *
+     * @return List of ProductResponseDTO containing all products
+     * @throws ResourceNotFoundException if an error occurs while fetching products
+     */
     public List<ProductResponseDTO> getAllProducts() {
         try {
             return productRepository.findAll().stream()
@@ -36,12 +44,26 @@ public class ProductService {
         }
     }
 
+    /**
+     * Retrieves a product by its ID.
+     *
+     * @param id the ID of the product to retrieve
+     * @return ProductResponseDTO containing the product details
+     * @throws ResourceNotFoundException if the product with the given ID does not exist
+     */
     public ProductResponseDTO getProductById(Long id) {
         return productRepository.findById(id)
                 .map(productMapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 
+    /**
+     * Creates a new product.
+     *
+     * @param createProductDTO the DTO containing product details
+     * @return ProductResponseDTO containing the created product details
+     * @throws ResourceCreationException if the product creation fails
+     */
     public ProductResponseDTO createProduct(CreateProductDTO createProductDTO) {
         try {
             Product product = productMapper.toEntity(createProductDTO);
@@ -52,6 +74,14 @@ public class ProductService {
         }
     }
 
+    /**
+     * Updates an existing product by its ID.
+     *
+     * @param id the ID of the product to update
+     * @param updateProductDTO the DTO containing updated product details
+     * @return ProductResponseDTO containing the updated product details
+     * @throws ResourceNotFoundException if the product with the given ID does not exist
+     */
     public ProductResponseDTO updateProduct(Long id, UpdateProductDTO updateProductDTO) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -61,6 +91,12 @@ public class ProductService {
         return productMapper.toDTO(updatedProduct);
     }
 
+    /**
+     * Deletes a product by its ID.
+     *
+     * @param id the ID of the product to delete
+     * @throws ResourceNotFoundException if the product with the given ID does not exist
+     */
     public void deleteProduct(Long id) {
         try {
             if (!productRepository.existsById(id)) {

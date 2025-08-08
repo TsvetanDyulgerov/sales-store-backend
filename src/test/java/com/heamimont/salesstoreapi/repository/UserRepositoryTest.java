@@ -1,6 +1,6 @@
 package com.heamimont.salesstoreapi.repository;
 
-import com.heamimont.salesstoreapi.main.SalesStoreApiApplication;
+import com.heamimont.salesstoreapi.SalesStoreApiApplication;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
 import org.junit.jupiter.api.BeforeEach;
