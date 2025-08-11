@@ -10,9 +10,4 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Optional<Product> findByName(String name);
-    List<Product> findByAvailableQuantityLessThanEqual(int threshold);
-    List<Product> findBySellingPriceBetween(BigDecimal minPrice, BigDecimal maxPrice);
-    List<Product> findByAvailableQuantityGreaterThan(int quantity);
-    boolean existsByName(String name);
 }

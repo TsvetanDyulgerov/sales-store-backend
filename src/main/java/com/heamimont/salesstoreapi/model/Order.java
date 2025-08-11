@@ -2,9 +2,12 @@ package com.heamimont.salesstoreapi.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.List;
  */
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "orders")
 public class Order {
 
@@ -31,22 +36,27 @@ public class Order {
 
     @Getter
     @Setter
+    @NotNull
     @Column(name = "order_date", nullable = false)
     private LocalDate orderDate;
 
     @Getter
     @Setter
+    @NotNull
+    @PositiveOrZero
     @Column(name = "total_cost", nullable = false)
-    private double totalCost;
+    private BigDecimal totalCost;
 
     @Getter
     @Setter
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
     @Getter
     @Setter
+    @NotEmpty()
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 

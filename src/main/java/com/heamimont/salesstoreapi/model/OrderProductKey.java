@@ -8,10 +8,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class OrderProductKey implements Serializable {
 
     @Column(name = "order_id")

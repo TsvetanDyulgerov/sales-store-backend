@@ -6,11 +6,13 @@ import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
 import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.Order;
+import com.heamimont.salesstoreapi.model.OrderProduct;
 import com.heamimont.salesstoreapi.model.OrderStatus;
 import com.heamimont.salesstoreapi.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ public class OrderService {
 
     /**
      * Creates a new order.
+     * Automatically calculates the total cost of the order based on the products and their quantities.
      *
      * @param createOrderDTO the DTO containing order details
      * @return OrderResponseDTO containing the created order details
@@ -40,6 +43,15 @@ public class OrderService {
     public OrderResponseDTO createOrder(CreateOrderDTO createOrderDTO) {
         try {
             Order order = orderMapper.toEntity(createOrderDTO);
+
+            BigDecimal totalCost = new BigDecimal(0);
+
+            for (OrderProduct op : order.getOrderProducts()) {
+                BigDecimal lineTotal = op.getProduct().getSellingPrice().multiply(BigDecimal.valueOf(op.getProductQuantity()));
+                totalCost = totalCost.add(lineTotal);
+            }
+
+            order.setTotalCost(totalCost);
             Order savedOrder = orderRepository.save(order);
             return orderMapper.toDTO(savedOrder);
         } catch (Exception e) {

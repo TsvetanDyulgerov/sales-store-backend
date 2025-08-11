@@ -9,8 +9,4 @@ import java.util.List;
 
 @Repository
 public interface OrderProductRepository extends JpaRepository<OrderProduct, OrderProductKey> {
-    List<OrderProduct> findByOrderId(Long orderId);
-    List<OrderProduct> findByProductId(Long productId);
-    List<OrderProduct> findByProductIdAndProductQuantityGreaterThan(Long productId, int quantity);
-    List<OrderProduct> findByOrderIdAndProductQuantityGreaterThanEqual(Long orderId, int minQuantity);
 }

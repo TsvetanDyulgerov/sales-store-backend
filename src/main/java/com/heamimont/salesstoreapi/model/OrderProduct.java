@@ -6,11 +6,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "order_products")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Getter
+@Setter
 public class OrderProduct {
 
     @EmbeddedId
