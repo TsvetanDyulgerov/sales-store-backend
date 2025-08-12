@@ -1,8 +1,10 @@
 package com.heamimont.salesstoreapi.dto.report;
 
+import lombok.Data;
+
 import java.util.List;
 
-// DTO representing one order in the report
+@Data
 public class OrderReportDTO {
     private Long orderId;
     private List<OrderProductReportDTO> products;
@@ -15,5 +17,4 @@ public class OrderReportDTO {
         this.products = products;
         this.userFullName = userFullName;
     }
-    // getters and setters
 }

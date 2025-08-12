@@ -1,6 +1,5 @@
-package com.heamimont.salesstoreapi.config;
+package com.heamimont.salesstoreapi.security;
 
-import com.heamimont.salesstoreapi.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

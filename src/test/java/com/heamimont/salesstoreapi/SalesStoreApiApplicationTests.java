@@ -1,4 +1,4 @@
-package com.heamimont.salesstoreapi.main;
+package com.heamimont.salesstoreapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

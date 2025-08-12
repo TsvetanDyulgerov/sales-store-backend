@@ -2,22 +2,23 @@ package com.heamimont.salesstoreapi.dto.report;
 
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.model.OrderProduct;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class ReportMapper {
 
-    public static OrderReportDTO toOrderReportDTO(Order order) {
+    public OrderReportDTO toOrderReportDTO(Order order) {
         if (order == null) {
             return null;
         }
 
-
         // Map list of ordered products
         List<OrderProductReportDTO> productsDTO = order.getOrderProducts()
                 .stream()
-                .map(ReportMapper::toOrderProductReportDTO)
+                .map(this::toOrderProductReportDTO)
                 .collect(Collectors.toList());
 
         // Build and return full DTO
@@ -28,7 +29,7 @@ public class ReportMapper {
         );
     }
 
-    private static OrderProductReportDTO toOrderProductReportDTO(OrderProduct orderProduct) {
+    private OrderProductReportDTO toOrderProductReportDTO(OrderProduct orderProduct) {
         if (orderProduct == null) {
             return null;
         }

@@ -2,6 +2,7 @@ package com.heamimont.salesstoreapi.service;
 
 import com.heamimont.salesstoreapi.dto.report.OrderReportDTO;
 import com.heamimont.salesstoreapi.dto.report.ReportMapper;
+import com.heamimont.salesstoreapi.exceptions.ReportGenerationException;
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.repository.OrderRepository;
 import com.heamimont.salesstoreapi.repository.OrderSpecifications;
@@ -16,14 +17,15 @@ import java.util.stream.Collectors;
  * Service for generating reports based on orders.
  * Provides methods to filter orders by product name, username, and order date range.
  */
-
 @Service
 public class ReportService {
 
     private final OrderRepository orderRepository;
+    private final ReportMapper reportMapper;
 
-    public ReportService(OrderRepository orderRepository) {
+    public ReportService(OrderRepository orderRepository, ReportMapper reportMapper) {
         this.orderRepository = orderRepository;
+        this.reportMapper = reportMapper;
     }
 
     /**
@@ -44,13 +46,13 @@ public class ReportService {
 
         Specification<Order> spec = null;
 
-        if (productName != null && !productName.isBlank()) {
-            Specification<Order> productSpec = OrderSpecifications.hasProductName(productName);
+        if (productName != null && !productName.trim().isEmpty()) {
+            Specification<Order> productSpec = OrderSpecifications.hasProductName(productName.trim());
             spec = (spec == null) ? productSpec : spec.and(productSpec);
         }
 
-        if (username != null && !username.isBlank()) {
-            Specification<Order> usernameSpec = OrderSpecifications.hasUsername(username);
+        if (username != null && !username.trim().isEmpty()) {
+            Specification<Order> usernameSpec = OrderSpecifications.hasUsername(username.trim());
             spec = (spec == null) ? usernameSpec : spec.and(usernameSpec);
         }
 
@@ -64,16 +66,19 @@ public class ReportService {
             spec = (spec == null) ? endDateSpec : spec.and(endDateSpec);
         }
 
-        // If no filters, spec will be null -> fetch all orders
-        List<Order> filteredOrders = null;
+        List<Order> filteredOrders;
         try {
-            filteredOrders = orderRepository.findAll(spec);
+            if (spec == null) {
+                filteredOrders = orderRepository.findAll(); // No filters
+            } else {
+                filteredOrders = orderRepository.findAll(spec);
+            }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch filtered orders: " + e.getMessage(), e);
+            throw new ReportGenerationException("Failed to fetch filtered orders", e);
         }
 
         return filteredOrders.stream()
-                .map(ReportMapper::toOrderReportDTO)
+                .map(reportMapper::toOrderReportDTO)
                 .collect(Collectors.toList());
     }
 }
