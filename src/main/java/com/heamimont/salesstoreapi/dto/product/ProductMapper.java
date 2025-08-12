@@ -42,7 +42,6 @@ public class ProductMapper {
         dto.setActualPrice(product.getActualPrice());
         dto.setSellingPrice(product.getSellingPrice());
         dto.setAvailableQuantity(product.getAvailableQuantity());
-        dto.setVersion(product.getVersion());
         return dto;
     }
 }

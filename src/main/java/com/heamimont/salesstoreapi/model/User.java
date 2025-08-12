@@ -1,5 +1,7 @@
 package com.heamimont.salesstoreapi.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +24,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Username cannot be null")
     @Column (nullable = false, unique = true, length = 50)
     private String username;
 
@@ -32,15 +35,16 @@ public class User {
     private String lastName;
 
     @Column(nullable = false, unique = true, length = 100)
+    @NotBlank(message="Email cannot be blank")
     // Email validation regex pattern (one or more letter, symbol or number before '@', followed by domain name and top-level domain
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Invalid email format")
     private String email;
 
-    @Column(nullable = false, length = 100)
-    // Password validation regex pattern (at least 8 characters, at least 1 letter and 1 number)
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Password must be at least 8 characters long, contain at least 1 letter and 1 number")
+    @NotNull(message = "Password cannot be null")
+    @Column(nullable = false, length = 100) // Password validation is in CreateUserDTO
     private String password;
 
+    @NotNull(message = "Role cannot be null")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

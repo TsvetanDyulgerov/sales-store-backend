@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -13,5 +14,5 @@ public abstract class OrderDTO {
 
     @NotNull(message = "Total cost is required")
     @Positive(message = "Total cost must be positive")
-    protected Double totalCost;
+    protected BigDecimal totalCost;
 }

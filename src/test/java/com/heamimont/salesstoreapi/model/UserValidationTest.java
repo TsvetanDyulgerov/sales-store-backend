@@ -31,6 +31,7 @@ public class UserValidationTest {
     @Test
     void whenUserIsValid_noConstraintViolations() {
         User user = new User();
+        user.setId(1L);
         user.setUsername("validUser");
         user.setFirstName("John");
         user.setLastName("Doe");

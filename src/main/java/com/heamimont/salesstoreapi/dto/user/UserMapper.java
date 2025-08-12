@@ -58,9 +58,9 @@ public class UserMapper {
 
     public CreateUserDTO fromRegisterRequest(RegisterRequest request) {
         CreateUserDTO dto = new CreateUserDTO();
-        dto.setUsername(request.getUsername());
+        dto.setUsername(request.getUsername().toLowerCase());
         dto.setPassword(request.getPassword());
-        dto.setEmail(request.getEmail());
+        dto.setEmail(request.getEmail().toLowerCase());
         dto.setFirstName(request.getFirstName());
         dto.setLastName(request.getLastName());
         dto.setRole(Role.USER); // default role

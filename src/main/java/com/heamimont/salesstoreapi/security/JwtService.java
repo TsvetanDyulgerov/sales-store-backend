@@ -19,7 +19,6 @@ import java.util.function.Function;
  * Service for handling JWT operations such as token generation, validation, and claim extraction.
  * Uses HS256 algorithm with a secret key defined in application properties.
  */
-
 @Service
 public class JwtService {
 

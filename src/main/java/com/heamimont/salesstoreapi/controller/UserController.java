@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/users")
 @PreAuthorize("hasRole('ADMIN')")  // All endpoints require ADMIN role
 public class UserController {
     private final UserService userService;

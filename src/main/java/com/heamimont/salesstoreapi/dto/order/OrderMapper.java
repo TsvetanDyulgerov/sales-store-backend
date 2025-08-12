@@ -4,7 +4,6 @@ import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.model.OrderProduct;
 import com.heamimont.salesstoreapi.model.Product;
-import com.heamimont.salesstoreapi.model.User;
 import com.heamimont.salesstoreapi.repository.ProductRepository;
 import com.heamimont.salesstoreapi.repository.UserRepository;
 import org.springframework.stereotype.Component;
@@ -14,27 +13,20 @@ import java.util.ArrayList;
 
 @Component
 public class OrderMapper {
-    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final UserMapper userMapper;
 
     public OrderMapper(UserRepository userRepository, 
                       ProductRepository productRepository,
                       UserMapper userMapper) {
-        this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.userMapper = userMapper;
     }
 
     public Order toEntity(CreateOrderDTO dto) {
         Order order = new Order();
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
-        order.setUser(user);
         order.setOrderDate(dto.getOrderDate());
         order.setTotalCost(dto.getTotalCost());
-        order.setStatus(dto.getStatus());
         order.setOrderProducts(new ArrayList<>());
         
         if (dto.getOrderProducts() != null) {

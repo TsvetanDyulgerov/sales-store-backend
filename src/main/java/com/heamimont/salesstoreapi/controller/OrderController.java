@@ -16,7 +16,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("api/orders")
 public class OrderController {
     private final OrderService orderService;
 
@@ -31,10 +31,10 @@ public class OrderController {
             @Valid @RequestBody CreateOrderDTO createOrderDTO,
             @AuthenticationPrincipal Principal principal) {
 
-        // Set the username from the authenticated principal
+        String username = principal.getName();
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderService.createOrder(createOrderDTO));
+                .body(orderService.createOrder(createOrderDTO, username));
     }
 
     // Get current user's orders

@@ -8,7 +8,9 @@ import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.model.OrderProduct;
 import com.heamimont.salesstoreapi.model.OrderStatus;
+import com.heamimont.salesstoreapi.model.User;
 import com.heamimont.salesstoreapi.repository.OrderRepository;
+import com.heamimont.salesstoreapi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +28,12 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final UserRepository userRepository;
 
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -40,9 +44,14 @@ public class OrderService {
      * @return OrderResponseDTO containing the created order details
      * @throws ResourceCreationException if the order creation fails
      */
-    public OrderResponseDTO createOrder(CreateOrderDTO createOrderDTO) {
+    public OrderResponseDTO createOrder(CreateOrderDTO createOrderDTO, String username) {
         try {
+            // Fetch user entity by username
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
             Order order = orderMapper.toEntity(createOrderDTO);
+            order.setUser(user);
 
             BigDecimal totalCost = new BigDecimal(0);
 

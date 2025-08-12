@@ -4,17 +4,22 @@ import com.heamimont.salesstoreapi.dto.auth.AuthResponse;
 import com.heamimont.salesstoreapi.dto.auth.LoginRequest;
 import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
 import com.heamimont.salesstoreapi.service.AuthenticationService;
-import com.heamimont.salesstoreapi.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+/**
+ * Controller for handling user authentication and registration.
+ * It provides endpoints for logging in and registering users.
+ */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("api/auth")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    public AuthenticationController(AuthenticationService authenticationService, UserService userService) {
+    public AuthenticationController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
 
@@ -23,7 +28,7 @@ public class AuthenticationController {
      * Authenticates a user and returns a JWT token.
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authenticationService.authenticate(request);
         return ResponseEntity.ok(response);
     }
@@ -33,7 +38,7 @@ public class AuthenticationController {
      * Registers a new user and returns a JWT token.
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authenticationService.register(request);
         return ResponseEntity.ok(response);
     }

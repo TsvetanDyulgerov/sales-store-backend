@@ -4,15 +4,13 @@ import com.heamimont.salesstoreapi.dto.report.OrderReportDTO;
 import com.heamimont.salesstoreapi.service.ReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("api/reports")
 @PreAuthorize("hasRole('ADMIN')")
 public class ReportsController {
 
@@ -32,6 +30,7 @@ public class ReportsController {
      * @param endDate     the end date for filtering (optional, format: yyyy-MM-dd)
      * @return a list of OrderReportDTO containing the filtered order reports
      */
+    @GetMapping()
     public ResponseEntity<List<OrderReportDTO>> getOrdersReport(@RequestParam(required = false) String productName,
                                                                 @RequestParam(required = false) String username,
                                                                 @RequestParam(required = false) String startDate,

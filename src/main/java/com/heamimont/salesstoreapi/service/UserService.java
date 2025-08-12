@@ -121,14 +121,14 @@ public class UserService {
         // Check username uniqueness only if it's being updated
         boolean isUsernameUpdate = updateUserDTO.getUsername() != null && 
                               !updateUserDTO.getUsername().equals(user.getUsername());
-        if (isUsernameUpdate && userRepository.existsByUsername(updateUserDTO.getUsername())) {
+        if (isUsernameUpdate && userRepository.existsByUsername(updateUserDTO.getUsername().toLowerCase())) {
             throw new ResourceCreationException("Username already exists");
         }
 
         // Check email uniqueness only if it's being updated
         boolean isEmailUpdate = updateUserDTO.getEmail() != null && 
                            !updateUserDTO.getEmail().equals(user.getEmail());
-        if (isEmailUpdate && userRepository.existsByEmail(updateUserDTO.getEmail())) {
+        if (isEmailUpdate && userRepository.existsByEmail(updateUserDTO.getEmail().toLowerCase())) {
             throw new ResourceCreationException("Email already exists");
         }
         
