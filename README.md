@@ -15,7 +15,7 @@ This Java-based RESTful web service, implemented using Spring Boot, offers a pub
 -   **Reporting:**  Generates customizable reports filtered by product name, username, and order date range, providing insights into orders and user activities.
     
 
-The backend uses a relational database (PostgreSQL or MS SQL Server) with clearly defined tables and relationships:
+The backend uses a relational database (PostgreSQL) with clearly defined tables and relationships:
 
 -   `users`  — stores user information and roles.
     
