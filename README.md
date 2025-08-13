@@ -30,4 +30,4 @@ All communication with the system is done through JSON-formatted messages via se
 
 
 ## Before use
-Before deploying this web service, use global/project wide search for `CHANGE_THIS_BEFORE_USE`. These are comments I've added for on everything that needs to be configured before deploying this web service. This includes changing the Spring configuration from `dev` mode to `prod` mode, configuring the database details, and removing the endpoint to the H2 console.
+Before deploying this web service, use global/project wide search for `CHANGE_THIS_BEFORE_USE`. These are comments I've added for on everything that needs to be configured before deploying this web service. This includes changing the Spring configuration from `dev` mode to `prod` mode, configuring the database details, and removing access to the to the H2 DB console endpoint.
