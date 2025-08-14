@@ -8,7 +8,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class OrderProductTest {
+class OrderProductValidationTest {
 
     private static Validator validator;
 
