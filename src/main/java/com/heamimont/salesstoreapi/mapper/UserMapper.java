@@ -1,26 +1,21 @@
-package com.heamimont.salesstoreapi.dto.user;
+package com.heamimont.salesstoreapi.mapper;
 import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
-import com.heamimont.salesstoreapi.model.Role;
+import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
+import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
+import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.model.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    private final PasswordEncoder passwordEncoder;
-
-    public UserMapper(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public User toEntity(CreateUserDTO dto) {
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole(dto.getRole());
+        user.setEmail(dto.getEmail().toLowerCase());
+        user.setPassword(dto.getPassword());
         return user;
     }
 
@@ -38,7 +33,7 @@ public class UserMapper {
             user.setEmail(dto.getEmail());
         }
         if (dto.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user.setPassword(dto.getPassword());
         }
         if (dto.getRole() != null) {
             user.setRole(dto.getRole());
@@ -58,12 +53,11 @@ public class UserMapper {
 
     public CreateUserDTO fromRegisterRequest(RegisterRequest request) {
         CreateUserDTO dto = new CreateUserDTO();
-        dto.setUsername(request.getUsername().toLowerCase());
+        dto.setUsername(request.getUsername());
         dto.setPassword(request.getPassword());
         dto.setEmail(request.getEmail().toLowerCase());
         dto.setFirstName(request.getFirstName());
         dto.setLastName(request.getLastName());
-        dto.setRole(Role.USER); // default role
         return dto;
     }
 }

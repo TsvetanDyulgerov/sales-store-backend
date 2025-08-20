@@ -8,13 +8,13 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@EntityScan(basePackages = "com.heamimont.salesstoreapi.model")
+@EntityScan(basePackages = "com.heamimont.salesstoreapi.validation")
 class OrderRepositoryTest {
 
     @Autowired
@@ -56,7 +56,7 @@ class OrderRepositoryTest {
         // Create an order
         Order order = new Order();
         order.setUser(testUser);
-        order.setOrderDate(LocalDate.now());
+        order.setOrderDate(LocalDateTime.now());
         order.setTotalCost(BigDecimal.valueOf(120));
         order.setStatus(OrderStatus.PENDING);
 

@@ -1,7 +1,7 @@
 package com.heamimont.salesstoreapi.service;
 
 import com.heamimont.salesstoreapi.dto.order.CreateOrderDTO;
-import com.heamimont.salesstoreapi.dto.order.OrderMapper;
+import com.heamimont.salesstoreapi.mapper.OrderMapper;
 import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
 import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,18 +35,22 @@ class OrderServiceTest {
     private User testUser;
     private Order testOrder;
     private OrderResponseDTO testOrderResponseDTO;
+    
+    private UUID orderId;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        orderId = UUID.randomUUID();
+
         testUser = new User();
-        testUser.setId(1L);
+        testUser.setId(orderId);
         testUser.setUsername("testuser");
 
         testOrder = new Order();
         testOrder.setUser(testUser);
-        testOrder.setOrderDate(LocalDate.now());
+        testOrder.setOrderDate(LocalDateTime.now());
         testOrder.setTotalCost(BigDecimal.valueOf(100));
         testOrder.setStatus(OrderStatus.PENDING);
         testOrder.setOrderProducts(new ArrayList<>());
@@ -160,14 +164,14 @@ class OrderServiceTest {
 
     @Test
     void updateOrderStatus_success() {
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(testOrder));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(testOrder));
         when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
         when(orderMapper.toDTO(testOrder)).thenReturn(testOrderResponseDTO);
 
-        OrderResponseDTO result = orderService.updateOrderStatus(1L, OrderStatus.DONE);
+        OrderResponseDTO result = orderService.updateOrderStatus(orderId, OrderStatus.DONE);
 
         assertNotNull(result);
-        verify(orderRepository).findById(1L);
+        verify(orderRepository).findById(orderId);
         verify(orderRepository).save(testOrder);
         verify(orderMapper).toDTO(testOrder);
         assertEquals(OrderStatus.DONE, testOrder.getStatus());
@@ -175,33 +179,33 @@ class OrderServiceTest {
 
     @Test
     void updateOrderStatus_orderNotFound_throwsResourceNotFoundException() {
-        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
-                () -> orderService.updateOrderStatus(1L, OrderStatus.DONE));
+                () -> orderService.updateOrderStatus(orderId, OrderStatus.DONE));
 
         assertTrue(ex.getMessage().contains("Order not found"));
     }
 
     @Test
     void getOrderById_success() {
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(testOrder));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(testOrder));
         when(orderMapper.toDTO(testOrder)).thenReturn(testOrderResponseDTO);
 
-        OrderResponseDTO result = orderService.getOrderById(1L);
+        OrderResponseDTO result = orderService.getOrderById(orderId);
 
         assertNotNull(result);
         assertEquals(testOrderResponseDTO, result);
-        verify(orderRepository).findById(1L);
+        verify(orderRepository).findById(orderId);
         verify(orderMapper).toDTO(testOrder);
     }
 
     @Test
     void getOrderById_notFound_throwsResourceNotFoundException() {
-        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
-                () -> orderService.getOrderById(1L));
+                () -> orderService.getOrderById(orderId));
 
         assertTrue(ex.getMessage().contains("Order not found"));
     }

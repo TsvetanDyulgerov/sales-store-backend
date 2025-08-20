@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +45,7 @@ class OrderSpecificationsTest {
 
         order1 = new Order();
         order1.setUser(user1);
-        order1.setOrderDate(LocalDate.of(2023, 8, 1));
+        order1.setOrderDate(LocalDateTime.of(2023, 8, 1, 12, 0));
         order1.setStatus(OrderStatus.DONE);
         order1.setTotalCost(new BigDecimal("1225"));
         order1.getOrderProducts().add(new OrderProduct(order1, product1, 1));
@@ -53,7 +54,7 @@ class OrderSpecificationsTest {
 
         order2 = new Order();
         order2.setUser(user2);
-        order2.setOrderDate(LocalDate.of(2023, 8, 15));
+        order2.setOrderDate(LocalDateTime.of(2023, 8, 15, 12 , 0));
         order2.setStatus(OrderStatus.PENDING);
         order2.setTotalCost(new BigDecimal("1000"));
         order2.getOrderProducts().add(new OrderProduct(order2, product1, 1));

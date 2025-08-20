@@ -1,5 +1,8 @@
-package com.heamimont.salesstoreapi.dto.product;
+package com.heamimont.salesstoreapi.mapper;
 
+import com.heamimont.salesstoreapi.dto.product.CreateProductDTO;
+import com.heamimont.salesstoreapi.dto.product.ProductResponseDTO;
+import com.heamimont.salesstoreapi.dto.product.UpdateProductDTO;
 import com.heamimont.salesstoreapi.model.Product;
 import org.springframework.stereotype.Component;
 

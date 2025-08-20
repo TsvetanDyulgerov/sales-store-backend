@@ -1,12 +1,11 @@
 package com.heamimont.salesstoreapi.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.UUID;
 
 /*
  * User entity representing the users of the system.
@@ -21,8 +20,9 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @Column(columnDefinition = "uuid")
+    private UUID id;
 
     @NotNull(message = "Username cannot be null")
     @Column (nullable = false, unique = true, length = 50)
@@ -36,8 +36,7 @@ public class User {
 
     @Column(nullable = false, unique = true, length = 100)
     @NotBlank(message="Email cannot be blank")
-    // Email validation regex pattern (one or more letter, symbol or number before '@', followed by domain name and top-level domain
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Invalid email format")
+    @Email
     private String email;
 
     @NotNull(message = "Password cannot be null")
@@ -48,5 +47,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+
 
 }

@@ -1,6 +1,6 @@
 package com.heamimont.salesstoreapi.service;
 
-import com.heamimont.salesstoreapi.dto.product.ProductMapper;
+import com.heamimont.salesstoreapi.mapper.ProductMapper;
 import com.heamimont.salesstoreapi.dto.product.ProductResponseDTO;
 import com.heamimont.salesstoreapi.dto.product.UpdateProductDTO;
 import com.heamimont.salesstoreapi.dto.product.CreateProductDTO;
@@ -8,7 +8,11 @@ import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.Product;
 import com.heamimont.salesstoreapi.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,9 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+
+
     public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
@@ -33,6 +40,7 @@ public class ProductService {
      * @return List of ProductResponseDTO containing all products
      * @throws ResourceNotFoundException if an error occurs while fetching products
      */
+    @Transactional(readOnly = true)
     public List<ProductResponseDTO> getAllProducts() {
         try {
             return productRepository.findAll().stream()
@@ -50,6 +58,7 @@ public class ProductService {
      * @return ProductResponseDTO containing the product details
      * @throws ResourceNotFoundException if the product with the given ID does not exist
      */
+    @Transactional(readOnly = true)
     public ProductResponseDTO getProductById(Long id) {
         return productRepository.findById(id)
                 .map(productMapper::toDTO)
@@ -63,10 +72,12 @@ public class ProductService {
      * @return ProductResponseDTO containing the created product details
      * @throws ResourceCreationException if the product creation fails
      */
+    @Transactional
     public ProductResponseDTO createProduct(CreateProductDTO createProductDTO) {
         try {
             Product product = productMapper.toEntity(createProductDTO);
             Product savedProduct = productRepository.save(product);
+            logger.info("[Product Creation] Product ({}, {}) created successfully", savedProduct.getId(), savedProduct.getName());
             return productMapper.toDTO(savedProduct);
         } catch (Exception e) {
             throw new ResourceCreationException("Failed to create product: " + e.getMessage());
@@ -81,12 +92,14 @@ public class ProductService {
      * @return ProductResponseDTO containing the updated product details
      * @throws ResourceNotFoundException if the product with the given ID does not exist
      */
+    @Transactional
     public ProductResponseDTO updateProduct(Long id, UpdateProductDTO updateProductDTO) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         productMapper.updateEntity(product, updateProductDTO);
         Product updatedProduct = productRepository.save(product);
+        logger.info("[Product Update] Product ({}, {}) updated successfully", updatedProduct.getId(), updatedProduct.getName());
         return productMapper.toDTO(updatedProduct);
     }
 
@@ -96,12 +109,14 @@ public class ProductService {
      * @param id the ID of the product to delete
      * @throws ResourceNotFoundException if the product with the given ID does not exist
      */
+    @Transactional
     public void deleteProduct(Long id) {
         try {
             if (!productRepository.existsById(id)) {
                 throw new ResourceNotFoundException("Product not found");
             }
             productRepository.deleteById(id);
+            logger.info("[Product Deletion] Product ({}) deleted successfully", id);
         } catch (Exception e) {
             throw new ResourceNotFoundException("Product not found. Deletion failed");
         }

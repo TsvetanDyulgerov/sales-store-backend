@@ -10,10 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/orders")
@@ -29,9 +30,9 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<OrderResponseDTO> createOrder(
             @Valid @RequestBody CreateOrderDTO createOrderDTO,
-            @AuthenticationPrincipal Principal principal) {
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-        String username = principal.getName();
+        String username = userDetails.getUsername();
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderService.createOrder(createOrderDTO, username));
@@ -41,11 +42,11 @@ public class OrderController {
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders(
-            @AuthenticationPrincipal Principal principal) {
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         // Set the username from the authenticated principal
 
-        return ResponseEntity.ok(orderService.getOrdersByUsername(principal.getName()));
+        return ResponseEntity.ok(orderService.getOrdersByUsername(userDetails.getUsername()));
     }
 
     // Get orders by user ID
@@ -59,7 +60,7 @@ public class OrderController {
     @PutMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderResponseDTO> updateOrderStatus(
-            @PathVariable Long orderId,
+            @PathVariable UUID orderId,
             @Valid @RequestBody UpdateOrderStatusDTO updateOrderStatusDTO) {
         return ResponseEntity.ok(orderService.updateOrderStatus(orderId, updateOrderStatusDTO.getStatus()));
     }
@@ -67,7 +68,7 @@ public class OrderController {
     // Get orders by user ID
     @GetMapping("/{orderId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long orderId) {
+    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable UUID orderId) {
         return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 }
