@@ -4,7 +4,7 @@ import com.heamimont.salesstoreapi.dto.auth.AuthResponse;
 import com.heamimont.salesstoreapi.dto.auth.LoginRequest;
 import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
 import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
-import com.heamimont.salesstoreapi.dto.user.UserMapper;
+import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for handling user authentication and registration.
@@ -36,6 +37,7 @@ public class AuthenticationService {
      * @param request RegisterRequest containing user details for registration
      * @return AuthResponse containing the JWT token
      */
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
         // Map RegisterRequest to CreateUserDTO
         CreateUserDTO createUserDTO = userMapper.fromRegisterRequest(request);
@@ -57,6 +59,7 @@ public class AuthenticationService {
      * @param request LoginRequest containing username and password
      * @return AuthResponse containing the JWT token
      */
+    @Transactional
     public AuthResponse authenticate(LoginRequest request) {
         // Validate credentials
         authenticationManager.authenticate(

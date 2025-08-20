@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 @NoArgsConstructor
@@ -15,7 +16,7 @@ import java.util.Objects;
 public class OrderProductKey implements Serializable {
 
     @Column(name = "order_id")
-    private Long orderId;
+    private UUID orderId;
 
     @Column(name = "product_id")
     private Long productId;

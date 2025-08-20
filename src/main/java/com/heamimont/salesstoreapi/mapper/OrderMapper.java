@@ -1,5 +1,7 @@
-package com.heamimont.salesstoreapi.dto.order;
-import com.heamimont.salesstoreapi.dto.user.UserMapper;
+package com.heamimont.salesstoreapi.mapper;
+import com.heamimont.salesstoreapi.dto.order.CreateOrderDTO;
+import com.heamimont.salesstoreapi.dto.order.OrderProductResponseDTO;
+import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.model.OrderProduct;
@@ -25,8 +27,6 @@ public class OrderMapper {
 
     public Order toEntity(CreateOrderDTO dto) {
         Order order = new Order();
-        order.setOrderDate(dto.getOrderDate());
-        order.setTotalCost(dto.getTotalCost());
         order.setOrderProducts(new ArrayList<>());
         
         if (dto.getOrderProducts() != null) {

@@ -3,6 +3,7 @@ package com.heamimont.salesstoreapi.service;
 import com.heamimont.salesstoreapi.dto.product.*;
 import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
+import com.heamimont.salesstoreapi.mapper.ProductMapper;
 import com.heamimont.salesstoreapi.model.Product;
 import com.heamimont.salesstoreapi.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,16 +1,20 @@
 package com.heamimont.salesstoreapi.dto.product;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class CreateProductDTO extends ProductDTO {
+public class CreateProductDTO{
+
+    @NotBlank(message = "Product name is required")
+    @Size(max = 50, message = "Product name must not exceed 50 characters")
+    private String name;
+
+    @Size(max = 400, message = "Description must not exceed 400 characters")
+    private String description;
+
     @NotNull(message = "Actual price is required")
     @Positive(message = "Actual price must be positive")
     private BigDecimal actualPrice;
@@ -20,6 +24,6 @@ public class CreateProductDTO extends ProductDTO {
     private BigDecimal sellingPrice;
 
     @NotNull(message = "Available quantity is required")
-    @Min(value = 0, message = "Available quantity cannot be negative")
+    @PositiveOrZero(message = "Available quantity cannot be negative")
     private Integer availableQuantity;
 }

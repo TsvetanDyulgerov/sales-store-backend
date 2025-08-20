@@ -1,7 +1,7 @@
 package com.heamimont.salesstoreapi.service;
 
 import com.heamimont.salesstoreapi.dto.report.OrderReportDTO;
-import com.heamimont.salesstoreapi.dto.report.ReportMapper;
+import com.heamimont.salesstoreapi.mapper.ReportMapper;
 import com.heamimont.salesstoreapi.exceptions.ReportGenerationException;
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.repository.OrderRepository;

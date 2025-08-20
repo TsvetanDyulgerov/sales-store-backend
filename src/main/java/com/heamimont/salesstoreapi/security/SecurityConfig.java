@@ -1,5 +1,6 @@
 package com.heamimont.salesstoreapi.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,7 +49,15 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        // Unauthenticated → 401
+                        .authenticationEntryPoint((request, response, authException)
+                                -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                        // Authenticated but forbidden → 403
+                        .accessDeniedHandler((request, response, accessDeniedException)
+                                -> response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
+                );
 
         return http.build();
     }

@@ -3,6 +3,7 @@ package com.heamimont.salesstoreapi.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
@@ -26,11 +27,11 @@ public class Product {
     @Column(length = 400)
     private String description;
 
-    @PositiveOrZero
+    @Positive
     @Column(name = "actual_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal actualPrice;
 
-    @PositiveOrZero
+    @Positive
     @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal sellingPrice;
 

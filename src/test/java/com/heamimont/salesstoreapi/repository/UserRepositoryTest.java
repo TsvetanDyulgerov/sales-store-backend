@@ -1,6 +1,5 @@
 package com.heamimont.salesstoreapi.repository;
 
-import com.heamimont.salesstoreapi.SalesStoreApiApplication;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 
@@ -82,28 +79,28 @@ public class UserRepositoryTest {
 
     @Test
     void existsByUsername_ShouldReturnTrue_WhenUserExists() {
-        boolean exists = userRepository.existsByUsername(testUser.getUsername());
+        boolean exists = userRepository.existsByUsernameIgnoreCase(testUser.getUsername());
 
         assertThat(exists).isTrue();
     }
 
     @Test
     void existsByUsername_ShouldReturnFalse_WhenUserDoesNotExist() {
-        boolean exists = userRepository.existsByUsername("nonexistent");
+        boolean exists = userRepository.existsByUsernameIgnoreCase("nonexistent");
 
         assertThat(exists).isFalse();
     }
 
     @Test
     void existsByEmail_ShouldReturnTrue_WhenUserExists() {
-        boolean exists = userRepository.existsByEmail(testUser.getEmail());
+        boolean exists = userRepository.existsByEmailIgnoreCase(testUser.getEmail());
 
         assertThat(exists).isTrue();
     }
 
     @Test
     void existsByEmail_ShouldReturnFalse_WhenUserDoesNotExist() {
-        boolean exists = userRepository.existsByEmail("nonexistent@example.com");
+        boolean exists = userRepository.existsByEmailIgnoreCase("nonexistent@example.com");
 
         assertThat(exists).isFalse();
     }

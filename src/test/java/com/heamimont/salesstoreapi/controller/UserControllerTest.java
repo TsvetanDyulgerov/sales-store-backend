@@ -1,17 +1,16 @@
-package com.heamimont.salesstoreapi.integration;
+package com.heamimont.salesstoreapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
 import com.heamimont.salesstoreapi.repository.UserRepository;
 import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
-import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -21,10 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Integration tests for UserController.
+ * Tests CRUD operations for User entity.
+ */
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerIT {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,7 +66,6 @@ class UserControllerIT {
         newUser.setLastName("Last");
         newUser.setEmail("exampleemail@domain.com");
         newUser.setPassword("password123");
-        newUser.setRole(Role.USER);
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)

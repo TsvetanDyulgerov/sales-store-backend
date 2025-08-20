@@ -1,5 +1,6 @@
-package com.heamimont.salesstoreapi.model;
+package com.heamimont.salesstoreapi.validation.user;
 
+import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -12,7 +13,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserValidationTest {
+public class CreateUserValidationTest {
 
     private static ValidatorFactory validatorFactory;
     private static Validator validator;
@@ -30,30 +31,27 @@ public class UserValidationTest {
 
     @Test
     void whenUserIsValid_noConstraintViolations() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("validUser");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("john.doe@example.com");
-        user.setPassword("abc12345");
-        user.setRole(Role.USER);
+        CreateUserDTO userDTO = new CreateUserDTO();
+        userDTO.setUsername("validUser");
+        userDTO.setFirstName("John");
+        userDTO.setLastName("Doe");
+        userDTO.setEmail("john.doe@example.com");
+        userDTO.setPassword("abc12345");
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<CreateUserDTO>> violations = validator.validate(userDTO);
         assertThat(violations).isEmpty();
     }
 
     @Test
     void whenEmailIsInvalid_constraintViolation() {
-        User user = new User();
-        user.setUsername("validUser");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("invalid-email"); // invalid format
-        user.setPassword("abc12345");
-        user.setRole(Role.USER);
+        CreateUserDTO userDTO = new CreateUserDTO();
+        userDTO.setUsername("validUser");
+        userDTO.setFirstName("John");
+        userDTO.setLastName("Doe");
+        userDTO.setEmail("invalid-email"); // invalid format
+        userDTO.setPassword("abc12345");
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<CreateUserDTO>> violations = validator.validate(userDTO);
         assertThat(violations).isNotEmpty();
 
         boolean emailViolation = violations.stream()
@@ -63,15 +61,14 @@ public class UserValidationTest {
 
     @Test
     void whenPasswordIsInvalid_constraintViolation() {
-        User user = new User();
-        user.setUsername("validUser");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("john.doe@example.com");
-        user.setPassword("short"); // too short, no digit
-        user.setRole(Role.USER);
+        CreateUserDTO userDTO = new CreateUserDTO();
+        userDTO.setUsername("validUser");
+        userDTO.setFirstName("John");
+        userDTO.setLastName("Doe");
+        userDTO.setEmail("john.doe@example.com");
+        userDTO.setPassword("short"); // too short, no digit
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<CreateUserDTO>> violations = validator.validate(userDTO);
         assertThat(violations).isNotEmpty();
 
         boolean passwordViolation = violations.stream()
@@ -81,15 +78,14 @@ public class UserValidationTest {
 
     @Test
     void whenUsernameIsNull_constraintViolation() {
-        User user = new User();
-        user.setUsername(null); // null username
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("john.doe@example.com");
-        user.setPassword("abc12345");
-        user.setRole(Role.USER);
+        CreateUserDTO userDTO = new CreateUserDTO();
+        userDTO.setUsername(null); // null username
+        userDTO.setFirstName("John");
+        userDTO.setLastName("Doe");
+        userDTO.setEmail("john.doe@example.com");
+        userDTO.setPassword("abc12345");
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<CreateUserDTO>> violations = validator.validate(userDTO);
         assertThat(violations).isNotEmpty();
 
         boolean usernameViolation = violations.stream()

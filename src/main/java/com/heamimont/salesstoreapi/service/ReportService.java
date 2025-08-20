@@ -1,13 +1,14 @@
 package com.heamimont.salesstoreapi.service;
 
 import com.heamimont.salesstoreapi.dto.report.OrderReportDTO;
-import com.heamimont.salesstoreapi.dto.report.ReportMapper;
+import com.heamimont.salesstoreapi.mapper.ReportMapper;
 import com.heamimont.salesstoreapi.exceptions.ReportGenerationException;
 import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.repository.OrderRepository;
 import com.heamimont.salesstoreapi.repository.OrderSpecifications;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,6 +39,7 @@ public class ReportService {
      * @param endDate filter orders up to this date (inclusive) (optional)
      * @return list of OrderReportDTO matching filters
      */
+    @Transactional(readOnly = true)
     public List<OrderReportDTO> getFilteredOrders(
             String productName,
             String username,

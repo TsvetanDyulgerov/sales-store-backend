@@ -1,11 +1,15 @@
 package com.heamimont.salesstoreapi.dto.user;
 import com.heamimont.salesstoreapi.model.Role;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UserResponseDTO extends UserDTO {
-    private Long id;
+public class UserResponseDTO {
+    private UUID id;
+    private String username;
+    private String firstName;
+    private String lastName;
+    private String email;
     private Role role;
 }

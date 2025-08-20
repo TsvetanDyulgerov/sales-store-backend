@@ -5,14 +5,16 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /*
  * Order entity representing a customer's order in the sales store.
  */
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,39 +22,29 @@ import java.util.List;
 public class Order {
 
     @Id
-    @Getter
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @Column(columnDefinition = "uuid")
+    private UUID id;
 
-    @Getter
-    @Setter
     @ManyToOne
     @NotNull
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Getter
-    @Setter
     @NotNull
     @Column(name = "order_date", nullable = false)
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
 
-    @Getter
-    @Setter
     @NotNull
     @PositiveOrZero
     @Column(name = "total_cost", nullable = false)
     private BigDecimal totalCost;
 
-    @Getter
-    @Setter
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
-    @Getter
-    @Setter
     @NotEmpty()
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> orderProducts = new ArrayList<>();

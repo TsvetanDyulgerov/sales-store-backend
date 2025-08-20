@@ -7,13 +7,12 @@ import com.heamimont.salesstoreapi.dto.auth.AuthResponse;
 import com.heamimont.salesstoreapi.dto.auth.LoginRequest;
 import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
 import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
-import com.heamimont.salesstoreapi.dto.user.UserMapper;
+import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.security.JwtService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

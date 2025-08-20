@@ -3,6 +3,7 @@ package com.heamimont.salesstoreapi.service;
 import com.heamimont.salesstoreapi.dto.user.*;
 import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
+import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
 import com.heamimont.salesstoreapi.repository.UserRepository;
@@ -34,13 +35,17 @@ class UserServiceTest {
     private UserResponseDTO userResponseDTO;
     private CreateUserDTO createUserDTO;
     private UpdateUserDTO updateUserDTO;
+    
+    private UUID userId;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
+        
+        userId = UUID.randomUUID();
+        
         user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("testuser");
         user.setEmail("test@example.com");
         user.setFirstName("Test");
@@ -49,7 +54,7 @@ class UserServiceTest {
         user.setPassword("encodedPassword");
 
         userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setId(1L);
+        userResponseDTO.setId(UUID.randomUUID());
         userResponseDTO.setUsername("testuser");
         userResponseDTO.setEmail("test@example.com");
         userResponseDTO.setFirstName("Test");
@@ -62,7 +67,6 @@ class UserServiceTest {
         createUserDTO.setFirstName("New");
         createUserDTO.setLastName("User");
         createUserDTO.setPassword("Password1");
-        createUserDTO.setRole(Role.USER);
 
         updateUserDTO = new UpdateUserDTO();
         updateUserDTO.setUsername("updateduser");
@@ -87,25 +91,27 @@ class UserServiceTest {
 
     @Test
     void getUserById_existingUser_returnsDTO() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userMapper.toDTO(user)).thenReturn(userResponseDTO);
 
-        UserResponseDTO result = userService.getUserById(1L);
+        UserResponseDTO result = userService.getUserById(userId);
 
         assertEquals("testuser", result.getUsername());
     }
 
     @Test
     void getUserById_nonExistingUser_throwsResourceNotFoundException() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(UUID.randomUUID())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1L));
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(userId));
     }
 
     @Test
     void createUser_successful() {
-        when(userRepository.existsByUsername("newuser")).thenReturn(false);
-        when(userRepository.existsByEmail("newuser@example.com")).thenReturn(false);
+        when(userRepository.existsByUsernameIgnoreCase("newuser")).thenReturn(false);
+        when(userRepository.existsByEmailIgnoreCase("newuser@example.com")).thenReturn(false);
         when(userMapper.toEntity(createUserDTO)).thenReturn(user);
         when(passwordEncoder.encode("Password1")).thenReturn("encodedPassword");
         when(userRepository.save(user)).thenReturn(user);
@@ -119,16 +125,16 @@ class UserServiceTest {
 
     @Test
     void createUser_usernameExists_throwsResourceCreationException() {
-        when(userRepository.existsByUsername("newuser")).thenReturn(true);
+        when(userRepository.existsByUsernameIgnoreCase("newuser")).thenReturn(true);
 
         assertThrows(ResourceCreationException.class, () -> userService.createUser(createUserDTO));
     }
 
     @Test
     void updateUser_successful() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.existsByUsername("updateduser")).thenReturn(false);
-        when(userRepository.existsByEmail("updateduser@example.com")).thenReturn(false);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.existsByUsernameIgnoreCase("updateduser")).thenReturn(false);
+        when(userRepository.existsByEmailIgnoreCase("updateduser@example.com")).thenReturn(false);
         doAnswer(invocation -> {
             User userArg = invocation.getArgument(0);
             UpdateUserDTO dtoArg = invocation.getArgument(1);
@@ -143,7 +149,7 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userMapper.toDTO(user)).thenReturn(userResponseDTO);
 
-        UserResponseDTO result = userService.updateUser(1L, updateUserDTO);
+        UserResponseDTO result = userService.updateUser(userId, updateUserDTO);
 
         assertEquals("testuser", result.getUsername()); // userMapper mocked to return the same DTO
         verify(userRepository).save(user);
@@ -151,24 +157,24 @@ class UserServiceTest {
 
     @Test
     void updateUser_nonExistingUser_throwsResourceNotFoundException() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(1L, updateUserDTO));
+        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(userId, updateUserDTO));
     }
 
     @Test
     void deleteUser_existingUser_successful() {
-        when(userRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(1L);
+        when(userRepository.existsById(userId)).thenReturn(true);
+        doNothing().when(userRepository).deleteById(userId);
 
-        assertDoesNotThrow(() -> userService.deleteUser(1L));
-        verify(userRepository).deleteById(1L);
+        assertDoesNotThrow(() -> userService.deleteUser(userId));
+        verify(userRepository).deleteById(userId);
     }
 
     @Test
     void deleteUser_nonExistingUser_throwsResourceNotFoundException() {
-        when(userRepository.existsById(1L)).thenReturn(false);
+        when(userRepository.existsById(userId)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(userId));
     }
 }

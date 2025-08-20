@@ -1,14 +1,14 @@
 package com.heamimont.salesstoreapi.dto.product;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class ProductResponseDTO extends ProductDTO {
+public class ProductResponseDTO {
     private Long id;
+    private String name;
+    private String description;
     private BigDecimal actualPrice;
     private BigDecimal sellingPrice;
     private int availableQuantity;
