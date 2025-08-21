@@ -5,6 +5,7 @@ import com.heamimont.salesstoreapi.dto.auth.LoginRequest;
 import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
 import com.heamimont.salesstoreapi.service.AuthenticationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,8 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authenticationService.register(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 }

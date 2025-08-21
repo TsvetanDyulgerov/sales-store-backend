@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 class OrderControllerTest {
 
     @Autowired private MockMvc mockMvc;
@@ -86,7 +88,6 @@ class OrderControllerTest {
     // Helper to build a minimal valid CreateOrderDTO for the seeded product
     private CreateOrderDTO validCreateOrderDTO(int quantity) {
         OrderProductDTO op = new OrderProductDTO();
-        op.setOrderId(1L);
         op.setProductId(product.getId());
         op.setProductQuantity(quantity);
 
@@ -239,7 +240,6 @@ class OrderControllerTest {
     @WithMockUser(username = "customer", roles = {"USER"})
     void createOrder_invalidProductQuantity_ShouldReturn400() throws Exception {
         OrderProductDTO op = new OrderProductDTO();
-        op.setOrderId(1L);
         op.setProductId(product.getId());
         op.setProductQuantity(0); // violates @Min(1)
 

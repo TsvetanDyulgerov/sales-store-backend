@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,8 +43,8 @@ public class ReportService {
     public List<OrderReportDTO> getFilteredOrders(
             String productName,
             String username,
-            LocalDate startDate,
-            LocalDate endDate) {
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
 
         Specification<Order> spec = null;
 

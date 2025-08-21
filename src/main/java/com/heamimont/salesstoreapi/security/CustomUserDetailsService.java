@@ -32,11 +32,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // Convert your User to Spring Security's UserDetails
+        // Return UserDetails object with user information
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                user.getRole().getAuthorities()  // You'll define this in your Role enum
+                user.getRole().getAuthorities()
         );
     }
 }

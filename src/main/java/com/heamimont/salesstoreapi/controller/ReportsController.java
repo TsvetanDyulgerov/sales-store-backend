@@ -2,11 +2,12 @@ package com.heamimont.salesstoreapi.controller;
 
 import com.heamimont.salesstoreapi.dto.report.OrderReportDTO;
 import com.heamimont.salesstoreapi.service.ReportService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,9 +36,21 @@ public class ReportsController {
                                                                 @RequestParam(required = false) String username,
                                                                 @RequestParam(required = false) String startDate,
                                                                 @RequestParam(required = false) String endDate) {
+        // Validate and parse the start and end dates
+        LocalDateTime start;
+        try {
+            start = (startDate != null) ? LocalDateTime.parse(startDate) : null;
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : null;
-        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : null;
+        // Validate and parse the end date
+        LocalDateTime end;
+        try {
+            end = (endDate != null) ? LocalDateTime.parse(endDate) : null;
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         List<OrderReportDTO> report = reportService.getFilteredOrders(productName, username, start, end);
         return ResponseEntity.ok(report);

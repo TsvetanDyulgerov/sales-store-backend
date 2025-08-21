@@ -31,7 +31,6 @@ public class OrderProductValidationTest {
 
     private OrderProductDTO buildValidOrderProduct() {
         OrderProductDTO orderProduct = new OrderProductDTO();
-        orderProduct.setOrderId(1L);
         orderProduct.setProductId(2L);
         orderProduct.setProductQuantity(5);
         return orderProduct;
@@ -43,17 +42,6 @@ public class OrderProductValidationTest {
 
         Set<ConstraintViolation<OrderProductDTO>> violations = validator.validate(orderProduct);
         assertThat(violations).isEmpty();
-    }
-
-    @Test
-    void whenOrderIdIsNull_constraintViolation() {
-        OrderProductDTO orderProduct = buildValidOrderProduct();
-        orderProduct.setOrderId(null);
-
-        Set<ConstraintViolation<OrderProductDTO>> violations = validator.validate(orderProduct);
-        assertThat(violations).isNotEmpty();
-        assertThat(violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("orderId"))).isTrue();
     }
 
     @Test

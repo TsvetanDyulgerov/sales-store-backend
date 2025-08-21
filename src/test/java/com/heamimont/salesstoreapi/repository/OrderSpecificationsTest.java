@@ -6,15 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class OrderSpecificationsTest {
 
     @Autowired
@@ -26,21 +27,17 @@ class OrderSpecificationsTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private User user1;
-    private User user2;
-    private Product product1;
-    private Product product2;
     private Order order1;
     private Order order2;
 
     @BeforeEach
     void setUp() {
-        user1 = new User(null, "alice", "Alice", "Smith", "alice@example.com", "password", Role.USER);
-        user2 = new User(null, "bob", "Bob", "Johnson", "bob@example.com", "password", Role.USER);
+        User user1 = new User(null, "alice", "Alice", "Smith", "alice@example.com", "password", Role.USER);
+        User user2 = new User(null, "bob", "Bob", "Johnson", "bob@example.com", "password", Role.USER);
         userRepository.saveAll(List.of(user1, user2));
 
-        product1 = new Product(null, "Laptop", "High-end laptop", new BigDecimal("1000"), new BigDecimal("1200"), 10);
-        product2 = new Product(null, "Mouse", "Wireless mouse", new BigDecimal("20"), new BigDecimal("25"), 50);
+        Product product1 = new Product(null, "Laptop", "High-end laptop", new BigDecimal("1000"), new BigDecimal("1200"), 10);
+        Product product2 = new Product(null, "Mouse", "Wireless mouse", new BigDecimal("20"), new BigDecimal("25"), 50);
         productRepository.saveAll(List.of(product1, product2));
 
         order1 = new Order();
@@ -85,14 +82,14 @@ class OrderSpecificationsTest {
 
     @Test
     void testOrderDateAfter() {
-        Specification<Order> spec = OrderSpecifications.orderDateAfter(LocalDate.of(2023, 8, 10));
+        Specification<Order> spec = OrderSpecifications.orderDateAfter(LocalDateTime.of(2023, 8, 10, 11, 30));
         List<Order> results = orderRepository.findAll(spec);
         assertThat(results).containsExactly(order2);
     }
 
     @Test
     void testOrderDateBefore() {
-        Specification<Order> spec = OrderSpecifications.orderDateBefore(LocalDate.of(2023, 8, 10));
+        Specification<Order> spec = OrderSpecifications.orderDateBefore(LocalDateTime.of(2023, 8, 10, 11, 30));
         List<Order> results = orderRepository.findAll(spec);
         assertThat(results).containsExactly(order1);
     }
@@ -101,8 +98,8 @@ class OrderSpecificationsTest {
     void testCombinedSpecifications() {
         Specification<Order> spec = OrderSpecifications.hasProductName("laptop")
                 .and(OrderSpecifications.hasUsername("alice"))
-                .and(OrderSpecifications.orderDateAfter(LocalDate.of(2023, 7, 31)))
-                .and(OrderSpecifications.orderDateBefore(LocalDate.of(2023, 8, 2)));
+                .and(OrderSpecifications.orderDateAfter(LocalDateTime.of(2023, 7, 31, 11, 30)))
+                .and(OrderSpecifications.orderDateBefore(LocalDateTime.of(2023, 8, 2, 11, 30)));
 
         List<Order> results = orderRepository.findAll(spec);
         assertThat(results).containsExactly(order1);

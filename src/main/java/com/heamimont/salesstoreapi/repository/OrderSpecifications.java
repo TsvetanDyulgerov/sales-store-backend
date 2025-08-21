@@ -5,7 +5,7 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class OrderSpecifications {
 
@@ -19,16 +19,15 @@ public class OrderSpecifications {
     }
 
     public static Specification<Order> hasUsername(String username) {
-        return (root, query, cb) -> {
-            return cb.equal(cb.lower(root.get("user").get("username")), username.toLowerCase());
-        };
+        return (root, query, cb)
+                -> cb.equal(cb.lower(root.get("user").get("username")), username.toLowerCase());
     }
 
-    public static Specification<Order> orderDateAfter(LocalDate startDate) {
+    public static Specification<Order> orderDateAfter(LocalDateTime startDate) {
         return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("orderDate"), startDate);
     }
 
-    public static Specification<Order> orderDateBefore(LocalDate endDate) {
+    public static Specification<Order> orderDateBefore(LocalDateTime endDate) {
         return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("orderDate"), endDate);
     }
 }

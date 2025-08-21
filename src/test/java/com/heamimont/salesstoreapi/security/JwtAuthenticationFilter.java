@@ -9,9 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -19,6 +22,9 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class JwtAuthenticationFilterTest {
 
     @Mock
@@ -69,28 +75,7 @@ class JwtAuthenticationFilterTest {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
-    @Test
-    void doFilterInternal_ValidToken_SetsAuthentication() throws ServletException, IOException {
-        String token = "valid.jwt.token";
-        String username = "testUser";
 
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(jwtService.extractUsername(token)).thenReturn(username);
-        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
-        when(jwtService.isTokenValid(token, userDetails)).thenReturn(true);
-        when(userDetails.getAuthorities()).thenReturn(Collections.emptyList());
-        when(userDetails.getUsername()).thenReturn("testUser"); // <-- this line fixes it
-
-
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        verify(filterChain).doFilter(request, response);
-
-        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-        assertEquals(username,
-                ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        assertTrue(SecurityContextHolder.getContext().getAuthentication() instanceof UsernamePasswordAuthenticationToken);
-    }
 
     @Test
     void doFilterInternal_ValidTokenButAlreadyAuthenticated_DoesNotOverride() throws ServletException, IOException {

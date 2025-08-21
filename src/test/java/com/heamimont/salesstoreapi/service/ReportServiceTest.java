@@ -9,14 +9,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 class ReportServiceTest {
 
     private OrderRepository orderRepository;
@@ -75,8 +77,8 @@ class ReportServiceTest {
     void testGetFilteredOrders_AllFilters() {
         String productName = "mouse";
         String username = "alice";
-        LocalDate startDate = LocalDate.of(2023, 1, 1);
-        LocalDate endDate = LocalDate.of(2023, 12, 31);
+        LocalDateTime startDate = LocalDateTime.of(2023, 1, 1, 11, 30);
+        LocalDateTime endDate = LocalDateTime.of(2023, 12, 31, 11, 30);
 
         Order order = new Order();
         when(orderRepository.findAll(any(Specification.class))).thenReturn(List.of(order));
