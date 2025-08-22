@@ -11,8 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecificationExecutor<Order> {
-    List<Order> findOrdersByUser_Username(String username);
-
+    Optional<List<Order>> findOrdersByUser_Username(String username);
+    Optional<List<Order>> findOrdersByUser_Id(UUID id);
     @Override
     Optional<Order> findById(@NonNull UUID orderId);
 }

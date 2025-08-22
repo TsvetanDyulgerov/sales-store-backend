@@ -89,9 +89,15 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderResponseDTO> getOrdersByUsername(String username) {
         try {
-            return orderRepository.findOrdersByUser_Username(username).stream()
-                    .map(orderMapper::toDTO)
-                    .collect(Collectors.toList());
+            List<Order> orders = orderRepository.findOrdersByUser_Username(username).orElse(null);
+
+            if (orders == null || orders.isEmpty()) {
+                throw new ResourceNotFoundException("No orders found for user [" + username + "]");
+            } else {
+                return orders.stream()
+                        .map(orderMapper::toDTO)
+                        .collect(Collectors.toList());
+            }
         } catch (Exception e) {
             throw new ResourceNotFoundException("Failed to fetch orders for user [" + username + "]");
         }

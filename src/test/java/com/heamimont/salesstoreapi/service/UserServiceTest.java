@@ -6,6 +6,7 @@ import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
+import com.heamimont.salesstoreapi.repository.OrderRepository;
 import com.heamimont.salesstoreapi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private OrderRepository orderRepository;
 
     @InjectMocks
     private UserService userService;

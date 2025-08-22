@@ -3,6 +3,8 @@ package com.heamimont.salesstoreapi.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,9 +29,9 @@ public class Order {
     private UUID id;
 
     @ManyToOne
-    @NotNull
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
+
 
     @NotNull
     @Column(name = "order_date", nullable = false)

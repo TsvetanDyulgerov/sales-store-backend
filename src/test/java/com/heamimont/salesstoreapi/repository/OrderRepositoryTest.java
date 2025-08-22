@@ -10,8 +10,10 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.data.util.ClassUtils.ifPresent;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -73,11 +75,13 @@ class OrderRepositoryTest {
         orderRepository.save(order);
 
         // Fetch orders by username
-        List<Order> orders = orderRepository.findOrdersByUser_Username("testuser");
+        Optional<List<Order>> orders = orderRepository.findOrdersByUser_Username("testuser");
 
-        assertThat(orders).hasSize(1);
-        assertThat(orders.get(0).getUser().getUsername()).isEqualTo("testuser");
-        assertThat(orders.get(0).getOrderProducts()).hasSize(1);
-        assertThat(orders.get(0).getOrderProducts().get(0).getProduct().getName()).isEqualTo("Sample Product");
+        List<Order> orderList = orders.get();
+
+        assertThat(orderList).hasSize(1);
+        assertThat(orderList.get(0).getUser().getUsername()).isEqualTo("testuser");
+        assertThat(orderList.get(0).getOrderProducts()).hasSize(1);
+        assertThat(orderList.get(0).getOrderProducts().get(0).getProduct().getName()).isEqualTo("Sample Product");
     }
 }

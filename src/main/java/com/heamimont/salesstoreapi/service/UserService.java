@@ -6,17 +6,22 @@ import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
+import com.heamimont.salesstoreapi.model.Order;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.model.User;
+import com.heamimont.salesstoreapi.repository.OrderRepository;
 import com.heamimont.salesstoreapi.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,16 +36,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final OrderRepository orderRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     public UserService(UserRepository userRepository, 
                       UserMapper userMapper, 
-                      PasswordEncoder passwordEncoder) {
+                      PasswordEncoder passwordEncoder,
+                       OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.orderRepository = orderRepository;
     }
 
     /**
@@ -173,11 +181,24 @@ public class UserService {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found");
         }
+
+        // Disassociate user from orders before deletion
+        List<Order> orders = orderRepository.findOrdersByUser_Id(id)
+                .orElse(Collections.emptyList());
+
+        for (Order o : orders) {
+            o.setUser(null);
+        }
+        orderRepository.saveAll(orders);
+
+        // Delete user
         try {
             userRepository.deleteById(id);
             logger.info("[User Deletion]: User ({}) deleted successfully", id);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Failed to delete user");
+            logger.error("[User Deletion]: Failed to delete user ({})", id, e);
+            throw new RuntimeException("Failed to delete user", e);
         }
     }
+
 }

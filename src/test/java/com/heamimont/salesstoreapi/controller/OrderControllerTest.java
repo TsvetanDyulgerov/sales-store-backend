@@ -111,7 +111,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "customer", roles = {"USER"})
+    @WithMockUser(username = "customer")
     void createOrder_asUser_ShouldReturnCreatedAndPersist() throws Exception {
         long before = orderRepository.count();
 
@@ -128,7 +128,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "customer", roles = {"USER"})
+    @WithMockUser(username = "customer")
     void getCurrentUserOrders_asUser_ShouldReturnOnlyOwnOrders() throws Exception {
         CreateOrderDTO dto = validCreateOrderDTO(1);
         createOrderAndReturnId(dto);
@@ -150,7 +150,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "customer", roles = {"USER"})
+    @WithMockUser(username = "customer")
     void getAllOrders_asUser_ShouldReturnForbidden() throws Exception {
         mockMvc.perform(get("/api/orders"))
                 .andExpect(status().isForbidden());
@@ -213,7 +213,7 @@ class OrderControllerTest {
     // ---------- Validation error scenarios ----------
 
     @Test
-    @WithMockUser(username = "customer", roles = {"USER"})
+    @WithMockUser(username = "customer")
     void createOrder_missingFields_ShouldReturn400() throws Exception {
         // No date, no totalCost, no products
         CreateOrderDTO dto = new CreateOrderDTO();
@@ -225,7 +225,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "customer", roles = {"USER"})
+    @WithMockUser(username = "customer")
     void createOrder_emptyProducts_ShouldReturn400() throws Exception {
         CreateOrderDTO dto = new CreateOrderDTO();
         dto.setOrderProducts(Collections.emptyList()); // violates @NotEmpty
@@ -237,7 +237,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "customer", roles = {"USER"})
+    @WithMockUser(username = "customer")
     void createOrder_invalidProductQuantity_ShouldReturn400() throws Exception {
         OrderProductDTO op = new OrderProductDTO();
         op.setProductId(product.getId());

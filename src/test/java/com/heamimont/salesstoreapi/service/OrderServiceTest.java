@@ -38,7 +38,7 @@ class OrderServiceTest {
     private User testUser;
     private Order testOrder;
     private OrderResponseDTO testOrderResponseDTO;
-    
+
     private UUID orderId;
 
     @BeforeEach
@@ -119,7 +119,7 @@ class OrderServiceTest {
     @Test
     void getOrdersByUsername_success() {
         List<Order> orders = List.of(testOrder);
-        when(orderRepository.findOrdersByUser_Username("testuser")).thenReturn(orders);
+        when(orderRepository.findOrdersByUser_Username("testuser")).thenReturn(Optional.of(orders));
         when(orderMapper.toDTO(testOrder)).thenReturn(testOrderResponseDTO);
 
         List<OrderResponseDTO> result = orderService.getOrdersByUsername("testuser");
