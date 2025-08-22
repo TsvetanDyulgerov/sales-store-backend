@@ -3,8 +3,6 @@ package com.heamimont.salesstoreapi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.swing.*;
-
 @SpringBootApplication
 public class SalesStoreApiApplication {
     public static void main(String[] args) {

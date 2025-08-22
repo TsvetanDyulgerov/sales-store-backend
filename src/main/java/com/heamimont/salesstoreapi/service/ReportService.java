@@ -50,7 +50,7 @@ public class ReportService {
 
         if (productName != null && !productName.trim().isEmpty()) {
             Specification<Order> productSpec = OrderSpecifications.hasProductName(productName.trim());
-            spec = (spec == null) ? productSpec : spec.and(productSpec);
+            spec = productSpec;
         }
 
         if (username != null && !username.trim().isEmpty()) {
