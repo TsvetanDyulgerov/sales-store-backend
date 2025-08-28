@@ -1,22 +1,37 @@
+-- =========================================================
 -- DB Initialization Script
+-- =========================================================
 
--- Add UUID extension for UUID generation
+-- Enable UUID extension for Postgres
+-- CHANGE_THIS_BEFORE_USE: Comment this out if using a non-Postgres DB
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create enums
-DO $$ BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role') THEN
-CREATE TYPE role AS ENUM ('ADMIN','USER');
-END IF;
-END$$;
+-- =========================================================
+-- Lookup Tables for enums
+-- =========================================================
 
-DO $$ BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'order_status') THEN
-CREATE TYPE order_status AS ENUM ('DONE','IN_PROGRESS','PENDING');
-END IF;
-END$$;
+-- Roles lookup
+CREATE TABLE IF NOT EXISTS roles (
+        name VARCHAR(20) PRIMARY KEY
+    );
 
--- Create tables
+INSERT INTO roles (name) VALUES ('ADMIN'), ('USER')
+    -- CHANGE_THIS_BEFORE_USE: Line below is Postgres-specific
+    ON CONFLICT DO NOTHING;
+
+-- Order statuses lookup
+CREATE TABLE IF NOT EXISTS order_statuses (
+        name VARCHAR(20) PRIMARY KEY
+    );
+
+INSERT INTO order_statuses (name) VALUES ('DONE'), ('IN_PROGRESS'), ('PENDING')
+    ON CONFLICT DO NOTHING;
+
+-- =========================================================
+-- Main Tables
+-- =========================================================
+
+-- Users table
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
@@ -24,9 +39,10 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
-    role role NOT NULL
+    role VARCHAR(20) NOT NULL REFERENCES roles(name)
     );
 
+-- Products table
 CREATE TABLE IF NOT EXISTS products (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
@@ -36,14 +52,16 @@ CREATE TABLE IF NOT EXISTS products (
     available_quantity INTEGER NOT NULL
     );
 
+-- Orders table
 CREATE TABLE IF NOT EXISTS orders (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     order_date TIMESTAMP NOT NULL,
     total_cost NUMERIC(38,2) NOT NULL,
-    status order_status NOT NULL
+    status VARCHAR(20) NOT NULL REFERENCES order_statuses(name)
     );
 
+-- Junction table: orders ↔ products
 CREATE TABLE IF NOT EXISTS order_products (
     order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id BIGINT NOT NULL REFERENCES products(id),
