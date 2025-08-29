@@ -1,9 +1,8 @@
 -- =========================================================
--- DB Initialization Script
+-- DB Initialization Script (Fixed to match UUID entities)
 -- =========================================================
 
 -- Enable UUID extension for Postgres
--- CHANGE_THIS_BEFORE_USE: Comment this out if using a non-Postgres DB
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- =========================================================
@@ -16,7 +15,6 @@ CREATE TABLE IF NOT EXISTS roles (
     );
 
 INSERT INTO roles (name) VALUES ('ADMIN'), ('USER')
-    -- CHANGE_THIS_BEFORE_USE: Line below is Postgres-specific
     ON CONFLICT DO NOTHING;
 
 -- Order statuses lookup
@@ -33,7 +31,7 @@ INSERT INTO order_statuses (name) VALUES ('DONE'), ('IN_PROGRESS'), ('PENDING')
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
-    id BIGSERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -54,16 +52,16 @@ CREATE TABLE IF NOT EXISTS products (
 
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     order_date TIMESTAMP NOT NULL,
     total_cost NUMERIC(38,2) NOT NULL,
     status VARCHAR(20) NOT NULL REFERENCES order_statuses(name)
     );
 
--- Junction table: orders ↔ products
+-- Junction table: orders <-> products
 CREATE TABLE IF NOT EXISTS order_products (
-    order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id BIGINT NOT NULL REFERENCES products(id),
     product_quantity INTEGER NOT NULL,
     PRIMARY KEY (order_id, product_id)

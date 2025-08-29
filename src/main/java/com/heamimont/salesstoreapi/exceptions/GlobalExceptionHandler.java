@@ -65,12 +65,9 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<Map<String, Object>> buildResponse(String message, HttpStatus status) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", status.value());
-        error.put("error", status.getReasonPhrase());
-        error.put("message", message);
-        return new ResponseEntity<>(error, status);
+        Map<String, Object> body = new HashMap<>();
+        body.put("error", new ErrorResponse(status.value(), message, LocalDateTime.now(), status.getReasonPhrase()));
+        return new ResponseEntity<>(body, status);
     }
 
 }
