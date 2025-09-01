@@ -29,6 +29,7 @@ public class AuthenticationController {
      * Authenticates a user and returns a JWT token.
      */
     @PostMapping("/login")
+    @CrossOrigin(origins = "*") // allow requests from the frontend
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authenticationService.authenticate(request);
         return ResponseEntity.ok(response);
@@ -39,6 +40,7 @@ public class AuthenticationController {
      * Registers a new user and returns a JWT token.
      */
     @PostMapping("/register")
+    @CrossOrigin(origins = "*") // allow requests from the frontend
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authenticationService.register(request);
         return ResponseEntity

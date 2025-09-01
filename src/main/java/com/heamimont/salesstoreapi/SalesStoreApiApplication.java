@@ -10,7 +10,7 @@ public class SalesStoreApiApplication {
         // UPDATE_THIS_BEFORE_USE
         // prod - for production use
         // dev - for development use
-        app.setAdditionalProfiles("prod");
+        app.setAdditionalProfiles("dev");
         app.run(args);
     }
 

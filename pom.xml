@@ -11,7 +11,7 @@
     </parent>
     
     <groupId>com.heamimont.salesstoreapi</groupId>
-    <artifactId>SalesStoreApi</artifactId>
+    <artifactId>SalesStoreBackend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>SalesStoreApi</name>
     <description>A backend for an online sales store</description>

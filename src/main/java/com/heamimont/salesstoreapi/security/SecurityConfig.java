@@ -43,7 +43,14 @@ public class SecurityConfig {
                 // UPDATE_THIS_BEFORE_USE - Comment out the line below in production
                 //.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // Allow H2 frames
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Allow public auth endpoints
+                        .requestMatchers("/api/auth/**", "/").permitAll() // Allow public auth endpoints
+                        .requestMatchers(
+                                "/",
+                                "/register",
+                                "/login",
+                                "/css/**",
+                                "/frontend/**"
+                        ).permitAll() // Allow public access to frontend resources
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
