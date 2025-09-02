@@ -3,6 +3,7 @@ package com.heamimont.salesstoreapi.controller;
 import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
 import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
+import com.heamimont.salesstoreapi.exceptions.BadRequestException;
 import com.heamimont.salesstoreapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,8 +32,13 @@ public class UserController {
 
     // Get user by ID or username
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
+        try {
+            UUID uuid = UUID.fromString(id);
+            return ResponseEntity.ok(userService.getUserById(uuid));
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
     }
 
     // Get user by username
