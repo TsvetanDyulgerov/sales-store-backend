@@ -6,6 +6,12 @@ target/
 
 .env
 
+###PostgreSQL DATA
+db_data/
+postgres-data/
+pgdata/
+
+
 ### STS ###
 .apt_generated
 .classpath
