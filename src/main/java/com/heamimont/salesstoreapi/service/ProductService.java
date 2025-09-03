@@ -66,6 +66,20 @@ public class ProductService {
     }
 
     /**
+     * Retrieves a product by its name.
+     *
+     * @param name the name of the product to retrieve
+     * @return ProductResponseDTO containing the product details
+     * @throws ResourceNotFoundException if the product with the given name does not exist
+     */
+    @Transactional(readOnly = true)
+    public ProductResponseDTO getProductByName(String name) {
+        return productRepository.findByName(name)
+                .map(productMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    }
+
+    /**
      * Creates a new product.
      *
      * @param createProductDTO the DTO containing product details

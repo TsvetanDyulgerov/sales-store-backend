@@ -35,6 +35,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
+    // Get a product by name
+    @GetMapping("/name/{name}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductResponseDTO> getProductByName(@PathVariable String name) {
+        return ResponseEntity.ok(productService.getProductByName(name));
+    }
+
     // Create a new product
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
