@@ -26,9 +26,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceAlreadyExists(ResourceAlreadyExistsException ex) {
+        logger.error("Resource Already Exists: {}", ex.getMessage(), ex);
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.CONFLICT.value());
+        body.put("error", "Conflict");
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
-        logger.error("Bad request: {}", ex.getMessage(), ex);
+        logger.error("Bad Request: {}", ex.getMessage(), ex);
         Map<String, Object> body = new HashMap<>();
         body.put("error", "Bad Request");
         body.put("message", ex.getMessage());

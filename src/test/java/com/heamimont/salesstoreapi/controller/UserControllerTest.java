@@ -111,7 +111,7 @@ class UserControllerTest {
         User existing = userRepository.findByUsername("admin").orElseThrow();
 
         mockMvc.perform(delete("/api/users/{id}", existing.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         assertThat(userRepository.findById(existing.getId())).isEmpty();
     }

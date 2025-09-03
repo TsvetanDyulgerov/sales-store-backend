@@ -2,6 +2,7 @@ package com.heamimont.salesstoreapi.service;
 
 import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
 import com.heamimont.salesstoreapi.dto.user.UpdateUserDTO;
+import com.heamimont.salesstoreapi.exceptions.ResourceAlreadyExistsException;
 import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
@@ -105,10 +106,10 @@ public class UserService {
     public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
         try {
             if (userRepository.existsByUsernameIgnoreCase(createUserDTO.getUsername())) {
-                throw new ResourceCreationException("Username already exists");
+                throw new ResourceAlreadyExistsException("[USERNAME] Username already exists");
             }
             if (userRepository.existsByEmailIgnoreCase(createUserDTO.getEmail())) {
-                throw new ResourceCreationException("Email already exists");
+                throw new ResourceAlreadyExistsException("[EMAIL] Email already exists");
             }
 
             User user = userMapper.toEntity(createUserDTO);
@@ -118,7 +119,7 @@ public class UserService {
             logger.info("[User Creation]: User ({}, {}) created successfully", savedUser.getId(), savedUser.getUsername());
             return userMapper.toDTO(savedUser);
 
-        } catch (ResourceCreationException e) {
+        } catch (ResourceAlreadyExistsException e) {
             throw e;
         } catch (Exception e) {
             throw new ResourceCreationException("Failed to create user: " + e.getMessage());
@@ -144,14 +145,14 @@ public class UserService {
         boolean isUsernameUpdate = dto.getUsername() != null &&
                               !dto.getUsername().equals(user.getUsername());
         if (isUsernameUpdate && userRepository.existsByUsernameIgnoreCase(dto.getUsername())) {
-            throw new ResourceCreationException("Username already exists");
+            throw new ResourceAlreadyExistsException("[USERNAME]: Username already exists");
         }
 
         // Check email uniqueness only if it's being updated
         boolean isEmailUpdate = dto.getEmail() != null &&
                            !dto.getEmail().equals(user.getEmail());
         if (isEmailUpdate && userRepository.existsByEmailIgnoreCase(dto.getEmail())) {
-            throw new ResourceCreationException("Email already exists");
+            throw new ResourceAlreadyExistsException("[EMAIL]: Email already exists");
         }
 
         // Update user fields using mapper
