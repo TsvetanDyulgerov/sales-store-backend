@@ -5,6 +5,7 @@ import com.heamimont.salesstoreapi.dto.order.CreateOrderDTO;
 import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
 import com.heamimont.salesstoreapi.dto.order.UpdateOrderStatusDTO;
 import com.heamimont.salesstoreapi.service.OrderService;
+import com.heamimont.salesstoreapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,11 @@ import java.util.UUID;
 @RequestMapping("api/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final UserService userService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
+        this.userService = userService;
     }
 
     // Create a new order for current user
@@ -36,6 +39,22 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderService.createOrder(createOrderDTO, username));
+    }
+
+    // Create a new order for current user
+    @PostMapping("/admin/{username}")
+    @PreAuthorize("hasRole( 'ADMIN')")
+    public ResponseEntity<OrderResponseDTO> createOrderAdmin(
+            @Valid @RequestBody CreateOrderDTO createOrderDTO,
+            @PathVariable String username) {
+
+        if (userService.getUserByUsername(username) != null) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(orderService.createOrder(createOrderDTO, username));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
     }
 
     // Get current user's orders
