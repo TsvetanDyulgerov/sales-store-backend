@@ -57,37 +57,35 @@ public class OrderController {
 
     }
 
+    // Get orders by order ID
+    @GetMapping("/{orderId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    }
+
     // Get current user's orders
-    @GetMapping("/user")
+    @GetMapping("/me")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders(
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        // Set the username from the authenticated principal
-
         return ResponseEntity.ok(orderService.getOrdersByUsername(userDetails.getUsername()));
     }
 
-    // Get orders by user ID
+    // Get all orders (admin only)
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
-    // Get orders by user ID
+    // Update order status by order ID
     @PutMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderResponseDTO> updateOrderStatus(
             @PathVariable UUID orderId,
             @Valid @RequestBody UpdateOrderStatusDTO updateOrderStatusDTO) {
         return ResponseEntity.ok(orderService.updateOrderStatus(orderId, updateOrderStatusDTO.getStatus()));
-    }
-
-    // Get orders by user ID
-    @GetMapping("/{orderId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 }

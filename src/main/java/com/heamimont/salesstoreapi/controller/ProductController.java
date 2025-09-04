@@ -1,6 +1,7 @@
 package com.heamimont.salesstoreapi.controller;
 
 import com.heamimont.salesstoreapi.dto.product.CreateProductDTO;
+import com.heamimont.salesstoreapi.dto.product.ProductPublicResponseDTO;
 import com.heamimont.salesstoreapi.dto.product.ProductResponseDTO;
 import com.heamimont.salesstoreapi.dto.product.UpdateProductDTO;
 import com.heamimont.salesstoreapi.service.ProductService;
@@ -26,6 +27,13 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    // Get all products for public view
+    @GetMapping("/public")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<ProductPublicResponseDTO>> getAllProductsPublic() {
+        return ResponseEntity.ok(productService.getAllProductsPublic());
     }
 
     // Get a product by ID

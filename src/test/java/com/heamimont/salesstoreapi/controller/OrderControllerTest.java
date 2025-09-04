@@ -133,7 +133,7 @@ class OrderControllerTest {
         CreateOrderDTO dto = validCreateOrderDTO(1);
         createOrderAndReturnId(dto);
 
-        mockMvc.perform(get("/api/orders/user"))
+        mockMvc.perform(get("/api/orders/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
     }

@@ -74,7 +74,7 @@ class ProductControllerTest {
         product.setAvailableQuantity(20);
         productRepository.save(product);
 
-        mockMvc.perform(get("/api/products"))
+        mockMvc.perform(get("/api/products/admin"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("Phone"));

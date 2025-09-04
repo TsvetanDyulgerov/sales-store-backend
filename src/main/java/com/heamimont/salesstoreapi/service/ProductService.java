@@ -1,5 +1,6 @@
 package com.heamimont.salesstoreapi.service;
 
+import com.heamimont.salesstoreapi.dto.product.ProductPublicResponseDTO;
 import com.heamimont.salesstoreapi.mapper.ProductMapper;
 import com.heamimont.salesstoreapi.dto.product.ProductResponseDTO;
 import com.heamimont.salesstoreapi.dto.product.UpdateProductDTO;
@@ -45,6 +46,23 @@ public class ProductService {
         try {
             return productRepository.findAll().stream()
                     .map(productMapper::toDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Failed to fetch all products");
+        }
+    }
+
+    /**
+     * Retrieves all products from the repository for public view.
+     *
+     * @return List of ProductPublicResponseDTO containing all products with limited details
+     * @throws ResourceNotFoundException if an error occurs while fetching products
+     */
+    @Transactional(readOnly = true)
+    public List<ProductPublicResponseDTO> getAllProductsPublic() {
+        try {
+            return productRepository.findAll().stream()
+                    .map(productMapper::toPublicDTO)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new ResourceNotFoundException("Failed to fetch all products");

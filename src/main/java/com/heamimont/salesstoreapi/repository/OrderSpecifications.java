@@ -11,8 +11,9 @@ public class OrderSpecifications {
 
     public static Specification<Order> hasProductName(String productName) {
         return (root, query, cb) -> {
-            // Join orderProducts and then product, filter by product name (LIKE %productName%)
-            Join<Object, Object> orderProductsJoin = root.join("orderProducts");
+            assert query != null;
+            query.distinct(true); // Prevent duplicate orders
+            Join<Order, Object> orderProductsJoin = root.join("orderProducts");
             Join<Object, Object> productJoin = orderProductsJoin.join("product");
             return cb.like(cb.lower(productJoin.get("name")), "%" + productName.toLowerCase() + "%");
         };
