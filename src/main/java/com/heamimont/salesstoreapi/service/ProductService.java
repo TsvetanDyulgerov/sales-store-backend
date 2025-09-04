@@ -116,6 +116,18 @@ public class ProductService {
         }
     }
 
+    public void reduceProductQuantity(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        if (product.getAvailableQuantity() == 0 || product.getAvailableQuantity() < quantity) {
+            throw new IllegalArgumentException("Insufficient product quantity available");
+        }
+        product.setAvailableQuantity(product.getAvailableQuantity() - quantity);
+        productRepository.save(product);
+        logger.info("[Product Quantity Reduction] Product ({}, {}) quantity reduced by {}. New available quantity: {}",
+                product.getId(), product.getName(), quantity, product.getAvailableQuantity());
+    }
+
     /**
      * Updates an existing product by its ID.
      *

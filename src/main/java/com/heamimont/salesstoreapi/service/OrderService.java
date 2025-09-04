@@ -33,14 +33,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final UserRepository userRepository;
+    private final ProductService productService;
 
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
 
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, UserRepository userRepository) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, UserRepository userRepository, ProductService productService) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.userRepository = userRepository;
+        this.productService = productService;
     }
 
     /**
@@ -66,6 +68,9 @@ public class OrderService {
             for (OrderProduct op : order.getOrderProducts()) {
                 BigDecimal lineTotal = op.getProduct().getSellingPrice().multiply(BigDecimal.valueOf(op.getProductQuantity()));
                 totalCost = totalCost.add(lineTotal);
+
+                // Reduce product quantity in inventory
+                productService.reduceProductQuantity(op.getProduct().getId(), op.getProductQuantity());
             }
 
             order.setTotalCost(totalCost);
