@@ -1,7 +1,7 @@
 package com.heamimont.salesstoreapi.service;
 
 import com.heamimont.salesstoreapi.dto.user.*;
-import com.heamimont.salesstoreapi.exceptions.ResourceCreationException;
+import com.heamimont.salesstoreapi.exceptions.ResourceAlreadyExistsException;
 import com.heamimont.salesstoreapi.exceptions.ResourceNotFoundException;
 import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.model.Role;
@@ -25,14 +25,15 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    //Do not delete this, needed for user deletion to check for existing orders
+    @Mock
+    private OrderRepository orderRepository;
+
     @Mock
     private UserMapper userMapper;
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private OrderRepository orderRepository;
 
     @InjectMocks
     private UserService userService;
@@ -133,7 +134,7 @@ class UserServiceTest {
     void createUser_usernameExists_throwsResourceCreationException() {
         when(userRepository.existsByUsernameIgnoreCase("newuser")).thenReturn(true);
 
-        assertThrows(ResourceCreationException.class, () -> userService.createUser(createUserDTO));
+        assertThrows(ResourceAlreadyExistsException.class, () -> userService.createUser(createUserDTO));
     }
 
     @Test

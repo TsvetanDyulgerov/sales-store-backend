@@ -6,6 +6,8 @@ import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.model.Role;
 import com.heamimont.salesstoreapi.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("api/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication and registration")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -34,6 +37,10 @@ public class AuthenticationController {
      * POST /api/auth/login
      * Authenticates a user and returns a JWT token.
      */
+    @Operation(
+            summary = "User Login",
+            description = "Authenticates a user and returns a JWT token."
+    )
     @PostMapping("/login")
     @CrossOrigin(origins = "*") // allow requests from the frontend
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -45,6 +52,10 @@ public class AuthenticationController {
      * POST /api/auth/register
      * Registers a new user and returns a JWT token.
      */
+    @Operation(
+            summary = "User Registration",
+            description = "Registers a new user and returns a JWT token."
+    )
     @PostMapping("/register")
     @CrossOrigin(origins = "*") // allow requests from the frontend
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
@@ -54,6 +65,14 @@ public class AuthenticationController {
                 .body(response);
     }
 
+    /**
+     * GET /api/auth/me
+     * Retrieves the currently authenticated user's details.
+     * Requires a valid JWT token in the Authorization header.
+     */
+    @Operation(
+            summary = "Get Current User",
+            description = "Retrieves the currently authenticated user's details.")
     @GetMapping("/me")
     @CrossOrigin(origins = "*") // allow requests from the frontend
     public ResponseEntity<UserResponseDTO> getCurrentUser(Authentication authentication) {

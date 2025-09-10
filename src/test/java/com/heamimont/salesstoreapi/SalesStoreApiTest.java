@@ -333,6 +333,6 @@ public class SalesStoreApiTest {
     private void deleteUser(UUID userId, String authToken) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/{id}", userId)
                         .header("Authorization", "Bearer " + authToken))
-                .andExpect(status().isOk()); // Expecting 200 OK for successful deletion
+                .andExpect(status().isNoContent()); // Expecting 200 OK for successful deletion
     }
 }

@@ -49,7 +49,10 @@ public class SecurityConfig {
                                 "/register",
                                 "/login",
                                 "/css/**",
-                                "/frontend/**"
+                                "/frontend/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
                         ).permitAll() // Allow public access to frontend resources
                         .anyRequest().authenticated()
                 )

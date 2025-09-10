@@ -88,12 +88,14 @@ class ReportControllerTest {
         laptop.setName("Laptop");
         laptop.setSellingPrice(BigDecimal.valueOf(1000.0));
         laptop.setActualPrice(BigDecimal.valueOf(900.0));
+        laptop.setAvailableQuantity(30);
         productRepository.save(laptop);
 
         Product phone = new Product();
         phone.setName("Phone");
         phone.setSellingPrice(BigDecimal.valueOf(500));
         phone.setActualPrice(BigDecimal.valueOf(400));
+        phone.setAvailableQuantity(50);
         productRepository.save(phone);
 
         // Seed John’s order (Laptop)
