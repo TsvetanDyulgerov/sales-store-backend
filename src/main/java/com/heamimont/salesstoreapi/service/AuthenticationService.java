@@ -4,12 +4,14 @@ import com.heamimont.salesstoreapi.dto.auth.AuthResponse;
 import com.heamimont.salesstoreapi.dto.auth.LoginRequest;
 import com.heamimont.salesstoreapi.dto.auth.RegisterRequest;
 import com.heamimont.salesstoreapi.dto.user.CreateUserDTO;
+import com.heamimont.salesstoreapi.exceptions.BadCredentialsException;
 import com.heamimont.salesstoreapi.mapper.UserMapper;
 import com.heamimont.salesstoreapi.dto.user.UserResponseDTO;
 import com.heamimont.salesstoreapi.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -62,17 +64,21 @@ public class AuthenticationService {
     @Transactional
     public AuthResponse authenticate(LoginRequest request) {
         // Validate credentials
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
 
-        // Generate token
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-        String jwtToken = jwtService.generateToken(userDetails);
+            // Generate token
+            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+            String jwtToken = jwtService.generateToken(userDetails);
 
-        return new AuthResponse(jwtToken);
+            return new AuthResponse(jwtToken);
+        } catch (AuthenticationException ex) {
+            throw new BadCredentialsException("Invalid username or password", ex);
+        }
     }
 }
