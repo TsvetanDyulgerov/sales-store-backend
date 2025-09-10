@@ -32,6 +32,10 @@ class OrderServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    //Do not delete this, needed for order creation to check available product quantity
+    @Mock
+    private ProductService productService;
+
     @InjectMocks
     private OrderService orderService;
 
