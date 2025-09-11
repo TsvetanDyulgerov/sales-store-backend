@@ -12,10 +12,13 @@ public class OrderSpecifications {
     public static Specification<Order> hasProductName(String productName) {
         return (root, query, cb) -> {
             assert query != null;
-            query.distinct(true); // Prevent duplicate orders
+            query.distinct(true);
             Join<Order, Object> orderProductsJoin = root.join("orderProducts");
             Join<Object, Object> productJoin = orderProductsJoin.join("product");
-            return cb.like(cb.lower(productJoin.get("name")), "%" + productName.toLowerCase() + "%");
+            return cb.and(
+                cb.like(cb.lower(productJoin.get("name")), "%" + productName.toLowerCase() + "%"),
+                cb.equal(orderProductsJoin.get("order"), root)
+            );
         };
     }
 
