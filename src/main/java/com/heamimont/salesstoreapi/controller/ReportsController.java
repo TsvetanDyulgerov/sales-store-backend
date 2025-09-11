@@ -2,6 +2,11 @@ package com.heamimont.salesstoreapi.controller;
 
 import com.heamimont.salesstoreapi.dto.report.OrderReportDTO;
 import com.heamimont.salesstoreapi.service.ReportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/reports")
 @PreAuthorize("hasRole('ADMIN')")
+@Tag(name = "Reports", description = "[ADMIN] Endpoints for generating order reports")
 public class ReportsController {
 
     private final ReportService reportService;
@@ -31,6 +37,12 @@ public class ReportsController {
      * @param endDate     the end date for filtering (optional, format: yyyy-MM-dd)
      * @return a list of OrderReportDTO containing the filtered order reports
      */
+    @Operation(summary = "Get Orders Report", description = "Retrieve a report of orders filtered by product name, username, and date range. All parameters are optional.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of order reports"),
+            @ApiResponse(responseCode = "400", description = "Invalid date format", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied", content = @Content)
+    })
     @GetMapping()
     public ResponseEntity<List<OrderReportDTO>> getOrdersReport(@RequestParam(required = false) String productName,
                                                                 @RequestParam(required = false) String username,

@@ -1,5 +1,6 @@
 package com.heamimont.salesstoreapi.dto.auth;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -25,6 +26,7 @@ public class RegisterRequest {
     @Email(message = "Email should be valid")
     private String email;
 
+    @Schema(description = "Password must be at least 8 characters long, contain at least 1 letter and 1 number", example = "Password1")
     @NotBlank(message = "Password is required")
     @Pattern(
             regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",

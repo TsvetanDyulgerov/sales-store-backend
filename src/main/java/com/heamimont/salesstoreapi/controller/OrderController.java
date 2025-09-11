@@ -6,6 +6,11 @@ import com.heamimont.salesstoreapi.dto.order.OrderResponseDTO;
 import com.heamimont.salesstoreapi.dto.order.UpdateOrderStatusDTO;
 import com.heamimont.salesstoreapi.service.OrderService;
 import com.heamimont.salesstoreapi.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +24,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/orders")
+@Tag(name = "Orders", description = "Endpoints for managing orders")
 public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
@@ -28,7 +34,16 @@ public class OrderController {
         this.userService = userService;
     }
 
-    // Create a new order for current user
+    /**
+     * POST /api/orders
+     * Create a new order for current user
+     */
+    @Operation(summary = "Create Order", description = "Create a new order for the current authenticated user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Order created successfully"),
+            @ApiResponse(responseCode = "400" , description = "Invalid order data", content = @Content),
+            @ApiResponse(responseCode = "401" , description = "Unauthorized access", content = @Content)
+    })
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<OrderResponseDTO> createOrder(
@@ -41,7 +56,17 @@ public class OrderController {
                 .body(orderService.createOrder(createOrderDTO, username));
     }
 
-    // Create a new order for current user
+    /**
+     * POST /api/orders/admin/{username}
+     * Create a new order for a specific user (admin only)
+     */
+    @Operation(summary = "Create Order for User", description = "Create a new order for a specific user (admin only).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201" , description = "Order created successfully"),
+            @ApiResponse(responseCode = "400" , description = "Invalid order data", content = @Content),
+            @ApiResponse(responseCode = "401" , description = "Unauthorized access",content = @Content),
+            @ApiResponse(responseCode = "404" , description = "User not found", content = @Content)
+    })
     @PostMapping("/admin/{username}")
     @PreAuthorize("hasRole( 'ADMIN')")
     public ResponseEntity<OrderResponseDTO> createOrderAdmin(
@@ -57,14 +82,32 @@ public class OrderController {
 
     }
 
-    // Get orders by order ID
+    /**
+     * GET /api/orders/{orderId}
+     * Get order by ID (admin only)
+     */
+    @Operation(summary = "Get order by ID", description = "Retrieve order details by its ID (admin only).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Order retrieved successfully"),
+            @ApiResponse(responseCode = "401" , description = "Unauthorized access", content = @Content),
+            @ApiResponse(responseCode = "404" , description = "Order not found", content = @Content)
+    })
     @GetMapping("/{orderId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable UUID orderId) {
         return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 
-    // Get current user's orders
+    /**
+     * GET /api/orders/me
+     * Get orders for current user
+     */
+    @Operation(summary = "Get Current User Orders", description = "Retrieve all orders for the current authenticated user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Orders retrieved successfully"),
+            @ApiResponse(responseCode = "401" , description = "Unauthorized access", content = @Content),
+            @ApiResponse(responseCode = "404" , description = "No orders found for the user", content = @Content)
+    })
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders(
@@ -73,14 +116,33 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByUsername(userDetails.getUsername()));
     }
 
-    // Get all orders (admin only)
+    /**
+     * GET /api/orders
+     * Get all orders (admin only)
+     */
+    @Operation(summary = "Get All Orders", description = "Retrieve all orders in the system (admin only).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Orders retrieved successfully"),
+            @ApiResponse(responseCode = "401" , description = "Unauthorized access", content = @Content),
+            @ApiResponse(responseCode = "404" , description = "No orders found", content = @Content)
+    })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<OrderResponseDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
-    // Update order status by order ID
+    /**
+     * PUT /api/orders/{orderId}/status
+     * Update order status (admin only)
+     */
+    @Operation(summary = "Update Order Status", description = "Update the status of an order (admin only).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Order status updated successfully"),
+            @ApiResponse(responseCode = "400" , description = "Invalid status value", content = @Content),
+            @ApiResponse(responseCode = "401" , description = "Unauthorized access", content = @Content),
+            @ApiResponse(responseCode = "404" , description = "Order not found", content = @Content)
+    })
     @PutMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderResponseDTO> updateOrderStatus(
