@@ -63,6 +63,7 @@ Make sure that the backend server is running to access the Swagger UI.
 |-------------|--------------------|------------------------------------------|--------------------------|---------------|
 | POST        | /api/auth/register | Register a new user                      | No                       | N/A           |
 | POST        | /api/auth/login    | Authenticate a user and return a JWT     | No                       | N/A           |
+| GET        | /api/auth/me        | Retrieves the currently logged in user's details     | Yes          | N/A           |
 ### User:
 | HTTP Method | Endpoint        | Description                      | Authentication Required | Roles Allowed |
 |-------------|-----------------|----------------------------------|--------------------------|---------------|
@@ -73,22 +74,23 @@ Make sure that the backend server is running to access the Swagger UI.
 ### Product:
 | HTTP Method | Endpoint            | Description                      | Authentication Required | Roles Allowed |
 |-------------|---------------------|----------------------------------|--------------------------|---------------|
-| GET         | /api/products       | Retrieve all products            | No                       | N/A           |
-| GET         | /api/products/{id}  | Retrieve a specific product by ID| No                       | N/A           |
+| GET         | /api/products       | Retrieve all products            | No                       | User, Admin    |
+| GET         | /api/products/{id}  | Retrieve a specific product by ID| No                       | User, Admin    |
 | POST        | /api/products       | Add a new product                | Yes                      | Admin         |
 | PUT         | /api/products/{id}  | Update product details           | Yes                      | Admin         |
 | DELETE      | /api/products/{id}  | Delete a product                 | Yes                      | Admin         |
 ### Order:
 | HTTP Method | Endpoint               | Description                              | Authentication Required | Roles Allowed       |
 |-------------|------------------------|------------------------------------------|--------------------------|---------------------|
-| POST        | /api/orders            | Place a new order                        | Yes                      | User                |
+| POST        | /api/orders            | Place a new order for current user       | Yes                      | User, Admin         |
+| POST        | /api/orders/admin/{username}  | Place an order for speicified user| Yes                      | Admin               |
 | GET         | /api/orders            | Retrieve all orders for the user         | Yes                      | User, Admin         |
-| GET         | /api/orders/{id}       | Retrieve a specific order by ID          | Yes                      | User (own orders), Admin |
+| GET         | /api/orders/{id}       | Retrieve a specific order by ID          | Yes                      | User, Admin         |
 | PUT         | /api/orders/{id}/status| Update the status of an order            | Yes                      | Admin               |
 ### Report:
 | HTTP Method | Endpoint      | Description                      | Authentication Required | Roles Allowed |
 |-------------|---------------|----------------------------------|--------------------------|---------------|
-| GET         | /api/reports  | Generate reports based on filters| Yes                      | Admin         |
+| GET         | /api/reports  | Generate filtered order reports  | Yes                      | Admin         |
 
 
 ## Getting Started
