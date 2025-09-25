@@ -54,7 +54,7 @@ The backend uses a relational database (PostgreSQL) with the following schema:
 
 ## API Endpoints:
 
-## Swagger:
+### Swagger
 A more detailed API documentation is available via Swagger UI at: `http://backend-server-url/swagger-ui/`
 Make sure that the backend server is running to access the Swagger UI.
 
