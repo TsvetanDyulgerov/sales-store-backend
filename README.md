@@ -6,7 +6,7 @@
 - [Core Features](#core-features)
 - [Technologies Used](#technologies-used)
 - [Database Schema](#database-schema)
-- [API Endpoints](#api-endpoints)
+- [API Endpoints + Swagger](#api-endpoints)
   - [Auth](#auth)
   - [User](#user)
   - [Product](#product)
@@ -53,6 +53,10 @@ The backend uses a relational database (PostgreSQL) with the following schema:
 
 
 ## API Endpoints:
+
+## Swagger:
+A more detailed API documentation is available via Swagger UI at: `http://backend-server-url/swagger-ui/`
+Make sure that the backend server is running to access the Swagger UI.
 
 ### Auth:
 | HTTP Method | Endpoint           | Description                              | Authentication Required | Roles Allowed |
