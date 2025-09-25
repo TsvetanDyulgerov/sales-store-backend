@@ -17,7 +17,7 @@
 
 ## About
 
-**sales-store-backend**  is an online store backend system which serves to manage users, products, and orders efficiently.
+**sales-store-backend**  is a backend system for a web-based e-commerce application which serves to manage users, products, and orders efficiently.
 It is build using Java with Spring Boot framework, ensuring a robust and scalable architecture.
 
 ## Core Features
